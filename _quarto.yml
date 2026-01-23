@@ -1,5 +1,5 @@
 project:
-  type: website
+  type: Daniel''s Blog
 
 website:
   title: "My Data Stories"
@@ -10,7 +10,7 @@ website:
         href: https://github.com/
 format:
   html:
-    theme: cosmo
+    theme: darkly
     css: styles.css
 
 execute:
