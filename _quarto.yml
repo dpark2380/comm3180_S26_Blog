@@ -1,8 +1,8 @@
 project:
-  type: Daniel''s Blog
+  type: website
 
 website:
-  title: "My Data Stories"
+  title: "Daniel's Data Stories"
   navbar:
     right:
       - about.qmd
