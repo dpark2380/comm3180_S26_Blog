@@ -5,4 +5,12 @@ about:
   template: jolla
 ---
 
-This blog is about my exploration of data and the analyses / conclusions which are derived from it.
+Hello! 
+
+I am Daniel Park, an exchange student from UNSW in Australia. I am here for one semester and I am excited to see what UPenn has to offer!
+
+An interesting fact about me would be that I was actually born in Los Angeles, but moved to South Korea for a couple of years, before moving again to Australia where I study now. As a result, I have both an American and Australian passport.
+
+This blog will outline my exploration of data and the analyses / conclusions which are derived from it.
+
+
