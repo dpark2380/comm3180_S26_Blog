@@ -7,32 +7,11 @@
     "text": "Hello!\nI am Daniel Park, an exchange student from UNSW in Australia. I am here for one semester and I am excited to see what UPenn has to offer!\nAn interesting fact about me would be that I was actually born in Los Angeles, but moved to South Korea for a couple of years, before moving again to Australia where I study now. As a result, I have both an American and Australian passport.\nThis blog will outline my exploration of data and the analyses / conclusions which are derived from it."
   },
   {
-    "objectID": "posts/001_testing/Blog_1.html",
-    "href": "posts/001_testing/Blog_1.html",
-    "title": "Daniel’s Blog 1",
-    "section": "",
-    "text": "Markdown content.\n\nfor i in range(5):\n    print(i)\n\n0\n1\n2\n3\n4"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Daniel’s Data Stories",
     "section": "",
-    "text": "Analysis of the Weather in Philadelphia - Blog 01\n\n\n\nweather\n\ndata stories\n\ndata visualization\n\n\n\nThis blog covers interesting trends and facts about the weather in Philadelphia from 2005 to 2025.\n\n\n\n\n\nFeb 5, 2026\n\n\nDaniel Park\n\n\n\n\n\n\n\n\n\n\n\n\nDaniel’s Blog 1\n\n\n\nLLMs\n\nMachine Learning\n\n\n\nTesting Blogging\n\n\n\n\n\nJan 23, 2026\n\n\nDaniel\n\n\n\n\n\n\n\n\n\n\n\n\nA test post\n\n\n\nvisualization\n\ndata stories\n\n\n\nAn example post from a Jupyter notebook\n\n\n\n\n\nJan 12, 2026\n\n\nAn LLM User\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/000_test_post/index.html",
-    "href": "posts/000_test_post/index.html",
-    "title": "A test post",
-    "section": "",
-    "text": "import matplotlib.pyplot as plt"
-  },
-  {
-    "objectID": "posts/000_test_post/index.html#stories-from-data",
-    "href": "posts/000_test_post/index.html#stories-from-data",
-    "title": "A test post",
-    "section": "Stories from data",
-    "text": "Stories from data\n\nLet’s set up some data\n\n\nx = ['A', 'B', 'C']\ny = [1, 5, 3]\n\n\nNow let’s visualize it\n\nplt.bar(x, y)\nplt.show()"
+    "text": "Analysis of the Weather in Philadelphia - Blog 01\n\n\n\nweather\n\ndata stories\n\ndata visualization\n\n\n\nThis blog covers interesting trends and facts about the weather in Philadelphia from 2005 to 2025.\n\n\n\n\n\nFeb 5, 2026\n\n\nDaniel Park\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/blog_01/DOW1_weather.html",
