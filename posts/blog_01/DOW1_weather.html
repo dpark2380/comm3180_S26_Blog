@@ -8,7 +8,7 @@
 
 <meta name="author" content="Daniel Park">
 <meta name="dcterms.date" content="2026-02-06">
-<meta name="description" content="Using two decades of daily weather data from Philadelphia, this post explores how temperatures, snowfall, and weather extremes have changed over time, revealing what Christmas in Philly has really been like over the past 20 years.">
+<meta name="description" content="Using two decades of daily weather data from Philadelphia, this post explores how temperatures, snowfall, and weather extremes have changed over time, revealing what the Christmas season in Philly has really been like over the past 20 years.">
 
 <title>Analysis of the Weather in Philadelphia - Blog 01 – Daniel’s Data Stories</title>
 <style>
@@ -151,13 +151,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <h1 class="title">Analysis of the Weather in Philadelphia - Blog 01</h1>
                   <div>
         <div class="description">
-          Using two decades of daily weather data from Philadelphia, this post explores how temperatures, snowfall, and weather extremes have changed over time, revealing what Christmas in Philly has really been like over the past 20 years.
+          Using two decades of daily weather data from Philadelphia, this post explores how temperatures, snowfall, and weather extremes have changed over time, revealing what the Christmas season in Philly has really been like over the past 20 years.
         </div>
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">weather</div>
                 <div class="quarto-category">data stories</div>
-                <div class="quarto-category">data visualizationx</div>
+                <div class="quarto-category">data visualization</div>
               </div>
                   </div>
   </div>
@@ -202,8 +202,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>weather_df <span class="op">=</span> pd.read_csv(<span class="st">'data/philadelphia_weather_2005_to_2025.csv'</span>)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>weather_df <span class="op">=</span> weather_df.assign(date<span class="op">=</span>pd.to_datetime(weather_df[<span class="st">'date'</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="question-1-how-did-the-low-and-high-temperature-on-christmas-day-change-over-time" class="level4">
-<h4 class="anchored" data-anchor-id="question-1-how-did-the-low-and-high-temperature-on-christmas-day-change-over-time">Question 1: How did the low and high temperature on Christmas day change over time?</h4>
+<section id="analysis" class="level2">
+<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
+<p>Christmas weather in Philadelphia is notoriously unpredictable. To understand how unusual this variability really is, this blog will examine daily weather records from 2005 - 2025, focusing on Christmas Day and placing it in the context of broader temperature, snowfall, and extreme weather trends.</p>
+<p>We will ultimately determine if it is worth staying in Philadelphia for the holiday season.</p>
+<section id="how-variable-is-the-temperature-on-christmas-day-in-philadelphia" class="level4">
+<h4 class="anchored" data-anchor-id="how-variable-is-the-temperature-on-christmas-day-in-philadelphia">How variable is the temperature on Christmas day in Philadelphia?</h4>
 <div id="929509be-9d6d-44f9-8989-1a1f6ffaf061" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>christmas_df <span class="op">=</span> weather_df.query(<span class="st">"day=='December 25'"</span>).set_index(<span class="st">'year'</span>)[[<span class="st">'high'</span>,<span class="st">'low'</span>]]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>christmas_df.plot(kind <span class="op">=</span> <span class="st">'line'</span>, style <span class="op">=</span> <span class="st">'-o'</span>)</span>
@@ -220,7 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>From the plot above, we can see that the temperatures on Christmas day fluctuate fairly significantly year by year.</p>
+<p>Christmas Day temperatures fluctuate substantially from year to year, with no clear monotonic trend over the period.</p>
 <div id="8c4ffe5e-7d07-44dd-af24-7fd3e1fe4258" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hottest Christmas: </span><span class="sc">{</span>christmas_df[<span class="st">'high'</span>]<span class="sc">.</span>idxmax()<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>christmas_df[<span class="st">'high'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss"> degrees F."</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Coldest Christmas: </span><span class="sc">{</span>christmas_df[<span class="st">'low'</span>]<span class="sc">.</span>idxmin()<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>christmas_df[<span class="st">'low'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> degrees F."</span>)</span>
@@ -235,8 +239,8 @@ Greatest temperature change: 2020, with a temperature difference between high an
 <p>The coldest Christmas in the dataset was in 2022, with a low temperature of 18 degrees Farenheit. However, this is still 17 degrees Farenheit warmer than the coldest Christmas day, which was in 1980 and 1983, which had a minimum temperature of just 1 degree Farenheit. (https://www.stormfax.com/phlChristmasWx.htm)</p>
 <p>The Christmas with the greatest temperature change was in 2020, with a temperature difference between high and low of 39 degrees Farenheit.</p>
 </section>
-<section id="how-did-annual-total-snowfall-change-over-time" class="level4">
-<h4 class="anchored" data-anchor-id="how-did-annual-total-snowfall-change-over-time">How did annual total snowfall change over time?</h4>
+<section id="changes-in-annual-snowfall" class="level4">
+<h4 class="anchored" data-anchor-id="changes-in-annual-snowfall">Changes in Annual Snowfall</h4>
 <div id="c909fb86-b8ff-4454-9e8d-73be2e3977b1" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>annual_snow <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'snow'</span>].<span class="bu">sum</span>()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -255,112 +259,179 @@ Greatest temperature change: 2020, with a temperature difference between high an
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Snowfall (inches)"</span>)</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.xticks(yearly_avg.index[::<span class="dv">2</span>])</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.xticks(annual_snow.index[::<span class="dv">2</span>])</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>annual_snow.sort_values(ascending <span class="op">=</span> <span class="va">True</span>).head(<span class="dv">5</span>)</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>annual_snow.sort_values(ascending <span class="op">=</span> <span class="va">False</span>).head(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[4]</span><span class="ansi-green-fg">, line 18</span>
-<span class="ansi-green-fg">     15</span> plt.xlabel(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Year</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">     16</span> plt.ylabel(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">Snowfall (inches)</span><span class="ansi-yellow-fg">"</span>)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">18</span> plt.xticks(<span class="ansi-yellow-bg">yearly_avg</span>.index[::<span class="ansi-green-fg">2</span>])
-<span class="ansi-green-fg">     19</span> plt.legend()
-<span class="ansi-green-fg">     20</span> plt.show()
-
-<span class="ansi-red-fg">NameError</span>: name 'yearly_avg' is not defined</pre>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="DOW1_weather_files/figure-html/cell-5-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="DOW1_weather_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>year
+2010    67.3
+2014    56.9
+2009    45.6
+2005    37.0
+2011    31.6
+Name: snow, dtype: float64</code></pre>
 </div>
 </div>
 <p>Based on the above regression line on the yearly total snowfall over the past 20 years, we can see that the amount of snow recorded in Philadelphia has decreased over the years.</p>
 <p>2010 saw the greatest amount of snow in the data set receiving 67.3 inches, which is 11.6 inches more than 2014, the year with the second highest snowfall. An interesting fact is that during this year’s snowstorm on January 26, certain parts of Philadelphia received 9.3 inches of snow, which is already more snow than the total yearly snowfall observed in 2023, 2012, 2008 and 2020.</p>
 </section>
-<section id="more-broadly-how-did-the-yearly-average-temperature-change-from-2005-2025" class="level4">
-<h4 class="anchored" data-anchor-id="more-broadly-how-did-the-yearly-average-temperature-change-from-2005-2025">More broadly: How did the yearly average temperature change from 2005-2025?</h4>
-<div id="e3eb589d-eb12-4c8d-a7f3-2eeeca2bb279" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>weather_df[<span class="st">'avg'</span>] <span class="op">=</span> (weather_df[<span class="st">'high'</span>] <span class="op">+</span> weather_df[<span class="st">'low'</span>]) <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>yearly_avg <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'avg'</span>].mean()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtaining the index and values for the plot.</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> yearly_avg.index.values</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> yearly_avg.values</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a regression line.</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>slope, intercept <span class="op">=</span> np.polyfit(x, y, <span class="dv">1</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> intercept <span class="op">+</span> slope <span class="op">*</span> x</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Increasing size of plot.</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting observed data and the regression line on the same plot.</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, <span class="st">'-o'</span>, label<span class="op">=</span><span class="st">'Observed'</span>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y_hat, <span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Regression line'</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Yearly Average Temperature, 2005–2025"</span>)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Temperature"</span>)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusting the indexing so only every two years labelled.</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>plt.xticks(yearly_avg.index[::<span class="dv">2</span>])</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Equation: y = </span><span class="sc">{</span>slope<span class="sc">:.4f}</span><span class="ss"> * x + </span><span class="sc">{</span>intercept<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="long-term-temperature-trends" class="level4">
+<h4 class="anchored" data-anchor-id="long-term-temperature-trends">Long Term Temperature Trends</h4>
+<div id="e3eb589d-eb12-4c8d-a7f3-2eeeca2bb279" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>weather_df[<span class="st">'avg'</span>] <span class="op">=</span> (weather_df[<span class="st">'high'</span>] <span class="op">+</span> weather_df[<span class="st">'low'</span>]) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>yearly_avg <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'avg'</span>].mean()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtaining the index and values for the plot.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> yearly_avg.index.values</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> yearly_avg.values</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a regression line.</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>slope, intercept <span class="op">=</span> np.polyfit(x, y, <span class="dv">1</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> intercept <span class="op">+</span> slope <span class="op">*</span> x</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Increasing size of plot.</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting observed data and the regression line on the same plot.</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, <span class="st">'-o'</span>, label<span class="op">=</span><span class="st">'Observed'</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y_hat, <span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Regression line'</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Yearly Average Temperature, 2005–2025"</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Temperature"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusting the indexing so only every two years labelled.</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.xticks(annual_snow.index[::<span class="dv">2</span>])</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Equation: y = </span><span class="sc">{</span>slope<span class="sc">:.4f}</span><span class="ss"> * x + </span><span class="sc">{</span>intercept<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW1_weather_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
-<p>From the plot above, we can see that there were many fluctuations in the yearly average temperature, with peaks in 2006, 2012, 2016, 2021, 2024.</p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Equation: y = 0.0907 * x + -125.2568</code></pre>
+</div>
+</div>
+<p>We can see that there were many fluctuations in the yearly average temperature, with peaks in 2006, 2012, 2016, 2021, 2024.</p>
 <p>The plotted regression line on the graph shows that the yearly average temperature increases as the years went by. More specifically, every year, the yearly average temperature goes up by 0.0907 degrees Farenheit on average. The fitted trend suggests an increase in average temperature over this period, though year-to-year variability is still large.</p>
 </section>
-<section id="how-did-the-highest-and-lowest-recorded-temperatures-for-each-year-change-over-time" class="level4">
-<h4 class="anchored" data-anchor-id="how-did-the-highest-and-lowest-recorded-temperatures-for-each-year-change-over-time">How did the highest and lowest recorded temperatures for each year change over time?</h4>
-<div id="224458a5-d7c3-45a9-a66d-06a056019511" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>highest_temps <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'high'</span>].<span class="bu">max</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>lowest_temps <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'low'</span>].<span class="bu">min</span>()</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> highest_temps.index.values</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.plot(x, highest_temps, label<span class="op">=</span><span class="st">'Annual max temp'</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.plot(x, lowest_temps, label<span class="op">=</span><span class="st">'Annual min temp'</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Temperature"</span>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Annual Highest and Lowest Temperatures"</span>)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>mean_max_temp <span class="op">=</span> highest_temps.mean()</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>mean_min_temp <span class="op">=</span> lowest_temps.mean()</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean annual max temp: </span><span class="sc">{</span>mean_max_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean annual min temp: </span><span class="sc">{</span>mean_min_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>std_max_temp <span class="op">=</span> highest_temps.std()</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>std_min_temp <span class="op">=</span> lowest_temps.std()</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Std dev of annual max temp: </span><span class="sc">{</span>std_max_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Std dev of annual min temp: </span><span class="sc">{</span>std_min_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>year_highest_max <span class="op">=</span> highest_temps.idxmax()</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>year_lowest_min <span class="op">=</span> lowest_temps.idxmin()</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year with highest annual max temp: </span><span class="sc">{</span>year_highest_max<span class="sc">}</span><span class="ss">, temp: </span><span class="sc">{</span>highest_temps<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year with lowest annual min temp: </span><span class="sc">{</span>year_lowest_min<span class="sc">}</span><span class="ss">, temp: </span><span class="sc">{</span>lowest_temps<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="changes-in-average-temperature-in-december-over-the-years" class="level4">
+<h4 class="anchored" data-anchor-id="changes-in-average-temperature-in-december-over-the-years">Changes in Average Temperature in December over the Years</h4>
+<div id="108c1b86-8f42-4578-b0a3-29def976f26b" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>december_df <span class="op">=</span> weather_df[weather_df[<span class="st">'date'</span>].dt.month <span class="op">==</span> <span class="dv">12</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>dec_avg_by_year <span class="op">=</span> december_df.groupby(december_df[<span class="st">'date'</span>].dt.year)[<span class="st">'avg'</span>].mean()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Regression line</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> dec_avg_by_year.index.values.astype(<span class="bu">float</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> dec_avg_by_year.values.astype(<span class="bu">float</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>slope, intercept <span class="op">=</span> np.polyfit(x, y, <span class="dv">1</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> intercept <span class="op">+</span> slope <span class="op">*</span> x</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Equation: y = </span><span class="sc">{</span>slope<span class="sc">:.4f}</span><span class="ss"> * x + </span><span class="sc">{</span>intercept<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, <span class="st">'-o'</span>, label<span class="op">=</span><span class="st">'Observed (Dec average)'</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y_hat, <span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Linear trend'</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Average Temperature in December by Year"</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Average Temperature (°F)"</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>plt.xticks(x[::<span class="dv">2</span>])</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Equation: y = 0.0760 * x + -113.4909</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW1_weather_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The regression line suggests that the average December temperature has been rising slowly throughout time, increasing an average of 0.076 degrees Farenheit every year. We can also see that there was an unusually warm December in 2015, with an average temperature above 50 degrees Farenheit.</p>
+</section>
+<section id="temperature-extremes-over-time" class="level4">
+<h4 class="anchored" data-anchor-id="temperature-extremes-over-time">Temperature Extremes over Time</h4>
+<div id="224458a5-d7c3-45a9-a66d-06a056019511" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>highest_temps <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'high'</span>].<span class="bu">max</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>lowest_temps <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'low'</span>].<span class="bu">min</span>()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> highest_temps.index.values</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.plot(x, highest_temps, label<span class="op">=</span><span class="st">'Annual max temp'</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>plt.plot(x, lowest_temps, label<span class="op">=</span><span class="st">'Annual min temp'</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Temperature"</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Annual Highest and Lowest Temperatures"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>mean_max_temp <span class="op">=</span> highest_temps.mean()</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>mean_min_temp <span class="op">=</span> lowest_temps.mean()</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean annual max temp: </span><span class="sc">{</span>mean_max_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean annual min temp: </span><span class="sc">{</span>mean_min_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>std_max_temp <span class="op">=</span> highest_temps.std()</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>std_min_temp <span class="op">=</span> lowest_temps.std()</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Std dev of annual max temp: </span><span class="sc">{</span>std_max_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Std dev of annual min temp: </span><span class="sc">{</span>std_min_temp<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>year_highest_max <span class="op">=</span> highest_temps.idxmax()</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>year_lowest_min <span class="op">=</span> lowest_temps.idxmin()</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year with highest annual max temp: </span><span class="sc">{</span>year_highest_max<span class="sc">}</span><span class="ss">, temp: </span><span class="sc">{</span>highest_temps<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year with lowest annual min temp: </span><span class="sc">{</span>year_lowest_min<span class="sc">}</span><span class="ss">, temp: </span><span class="sc">{</span>lowest_temps<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW1_weather_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mean annual max temp: 98.19
+Mean annual min temp: 9.52
+Std dev of annual max temp: 2.16
+Std dev of annual min temp: 4.57
+Year with highest annual max temp: 2010, temp: 103
+Year with lowest annual min temp: 2015, temp: 2</code></pre>
+</div>
 </div>
 <p>The annual maximum temperatures were fairly consistent throughout the 20 years, with a standard deviation of 2.16 degrees and an average maximum temperature of 98.19 degrees. The year with the hottest day was in 2010, with a temperature of 103 degrees, which interestingly enough was the year with the highest recorded annual snowfall in the dataset.</p>
-<p>Annual minimum temperatures have greater temperature fluctuation, with standard deviation of 4.57 degrees. The average annual minimum temperatures was 9.52 degrees. The year with the coldest day was in 2015 at 2 degrees.</p>
+<p>Annual minimum temperatures have greater temperature fluctuation, with standard deviation of 4.57 degrees. The average annual minimum temperatures was 9.52 degrees. The year with the coldest day was in 2015 at 2 degrees, but this is interesting as it had an unusually warm December as outlined previously.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Weather patterns in Philadelphia over the past two decades point to a combination of gradual warming, declining snowfall, and substantial variability in winter conditions. Christmas Day, in particular, shows no consistent pattern, however, analysis of the weather more broadly in the past 20 years indicates a gradual increase in average temperatures alongside fewer sustained periods of heavy snowfall.</p>
+<p>From the decreases in snowfall and increases in average temperature, we would recommend that if you want snow-filled winter, it may be preferable to spend the holiday season elsewhere. However, if you are staying in Philadelphia, one can enjoy warmer average temperatures through the holiday season compared to 20 years ago.</p>
 
 
 </section>
