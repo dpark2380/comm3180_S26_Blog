@@ -194,7 +194,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<div id="ca3db066-9b00-4534-a4c5-ce8c907c6105" class="cell" data-execution_count="1">
+<div id="ca3db066-9b00-4534-a4c5-ce8c907c6105" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -208,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We will ultimately determine if it is worth staying in Philadelphia for the holiday season.</p>
 <section id="how-variable-is-the-temperature-on-christmas-day-in-philadelphia" class="level4">
 <h4 class="anchored" data-anchor-id="how-variable-is-the-temperature-on-christmas-day-in-philadelphia">How variable is the temperature on Christmas day in Philadelphia?</h4>
-<div id="929509be-9d6d-44f9-8989-1a1f6ffaf061" class="cell" data-execution_count="2">
+<div id="929509be-9d6d-44f9-8989-1a1f6ffaf061" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>christmas_df <span class="op">=</span> weather_df.query(<span class="st">"day=='December 25'"</span>).set_index(<span class="st">'year'</span>)[[<span class="st">'high'</span>,<span class="st">'low'</span>]]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>christmas_df.plot(kind <span class="op">=</span> <span class="st">'line'</span>, style <span class="op">=</span> <span class="st">'-o'</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Changes in Low and High Temperature for Christmas Day over Time"</span>)</span>
@@ -225,7 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Christmas Day temperatures fluctuate substantially from year to year, with no clear long term trend over the period.</p>
-<div id="8c4ffe5e-7d07-44dd-af24-7fd3e1fe4258" class="cell" data-execution_count="3">
+<div id="8c4ffe5e-7d07-44dd-af24-7fd3e1fe4258" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Hottest Christmas: </span><span class="sc">{</span>christmas_df[<span class="st">'high'</span>]<span class="sc">.</span>idxmax()<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>christmas_df[<span class="st">'high'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss"> degrees F."</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Coldest Christmas: </span><span class="sc">{</span>christmas_df[<span class="st">'low'</span>]<span class="sc">.</span>idxmin()<span class="sc">}</span><span class="ss">, </span><span class="sc">{</span>christmas_df[<span class="st">'low'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> degrees F."</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Greatest temperature change: </span><span class="sc">{</span>(christmas_df[<span class="st">'high'</span>] <span class="op">-</span> christmas_df[<span class="st">'low'</span>])<span class="sc">.</span>idxmax()<span class="sc">}</span><span class="ss">, with a temperature difference between high and low of </span><span class="sc">{</span>(christmas_df[<span class="st">'high'</span>] <span class="op">-</span> christmas_df[<span class="st">'low'</span>])<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss"> degrees Farenheit."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -241,7 +241,7 @@ Greatest temperature change: 2020, with a temperature difference between high an
 </section>
 <section id="changes-in-annual-snowfall" class="level4">
 <h4 class="anchored" data-anchor-id="changes-in-annual-snowfall">Changes in Annual Snowfall</h4>
-<div id="c909fb86-b8ff-4454-9e8d-73be2e3977b1" class="cell" data-execution_count="4">
+<div id="c909fb86-b8ff-4454-9e8d-73be2e3977b1" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>annual_snow <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'snow'</span>].<span class="bu">sum</span>()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> annual_snow.index.values</span>
@@ -272,7 +272,7 @@ Greatest temperature change: 2020, with a temperature difference between high an
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>year
 2010    67.3
 2014    56.9
@@ -287,7 +287,7 @@ Name: snow, dtype: float64</code></pre>
 </section>
 <section id="long-term-temperature-trends" class="level4">
 <h4 class="anchored" data-anchor-id="long-term-temperature-trends">Long Term Temperature Trends</h4>
-<div id="e3eb589d-eb12-4c8d-a7f3-2eeeca2bb279" class="cell" data-execution_count="5">
+<div id="e3eb589d-eb12-4c8d-a7f3-2eeeca2bb279" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>weather_df[<span class="st">'avg'</span>] <span class="op">=</span> (weather_df[<span class="st">'high'</span>] <span class="op">+</span> weather_df[<span class="st">'low'</span>]) <span class="op">/</span> <span class="dv">2</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>yearly_avg <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'avg'</span>].mean()</span>
@@ -333,7 +333,7 @@ Name: snow, dtype: float64</code></pre>
 </section>
 <section id="changes-in-average-temperature-in-december-over-the-years" class="level4">
 <h4 class="anchored" data-anchor-id="changes-in-average-temperature-in-december-over-the-years">Changes in Average Temperature in December over the Years</h4>
-<div id="108c1b86-8f42-4578-b0a3-29def976f26b" class="cell" data-execution_count="9">
+<div id="108c1b86-8f42-4578-b0a3-29def976f26b" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>december_df <span class="op">=</span> weather_df[weather_df[<span class="st">'date'</span>].dt.month <span class="op">==</span> <span class="dv">12</span>]</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>dec_avg_by_year <span class="op">=</span> december_df.groupby(december_df[<span class="st">'date'</span>].dt.year)[<span class="st">'avg'</span>].mean()</span>
@@ -374,7 +374,7 @@ Name: snow, dtype: float64</code></pre>
 </section>
 <section id="temperature-extremes-over-time" class="level4">
 <h4 class="anchored" data-anchor-id="temperature-extremes-over-time">Temperature Extremes over Time</h4>
-<div id="224458a5-d7c3-45a9-a66d-06a056019511" class="cell" data-execution_count="6">
+<div id="224458a5-d7c3-45a9-a66d-06a056019511" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>highest_temps <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'high'</span>].<span class="bu">max</span>()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>lowest_temps <span class="op">=</span> weather_df.groupby(<span class="st">'year'</span>)[<span class="st">'low'</span>].<span class="bu">min</span>()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -431,7 +431,7 @@ Year with lowest annual min temp: 2015, temp: 2</code></pre>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>Weather patterns in Philadelphia over the past two decades point to a combination of gradual warming, declining snowfall, and substantial variability in winter conditions. Christmas Day, in particular, shows no consistent pattern. However, analysis of the weather more broadly in the past 20 years indicates a gradual increase in average temperatures alongside fewer sustained periods of heavy snowfall.</p>
-<p>From the decreases in snowfall and increases in average temperature, we would recommend that if you want snow-filled winter, it may be preferable to spend the holiday season elsewhere. However, if you are staying in Philadelphia, one can enjoy warmer average temperatures through the holiday season compared to 20 years ago.</p>
+<p>Overall, these findings suggest that while Philadelphia winters remain highly variable, recent decades have been characterised by warmer average temperatures and reduced snowfall. Although individual years may deviate from this pattern, the long-term trends indicate that snow-filled December holiday seasons are less typical than they were two decades ago.</p>
 
 
 </section>
