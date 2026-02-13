@@ -201,16 +201,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>I have never considered myself an extraverted person.</p>
 <p>I am not naturally what one might call “the life of the party.” I do not seek attention, and find it diffcult to be energised by large groups of people. However, I observed that personality tests often reduce extraversion to a simple score, a number that supposedly captures how social, outgoing, or talkative someone is.</p>
-<p>That raises a deeper question for me; what actually makes a person extraverted?</p>
+<p>That raised a deeper question for me; what actually makes a person extraverted?</p>
 <p>Is extraversion about confidence? About social warmth? About emotional stability? Or is it simply about talking more?</p>
-<p>In this post, I will analyse responses from the Open-Source Psychometrics Project’s Big Five Personality Test dataset. By examining how individual behaviors cluster together, and how extraversion relates to age, gender, culture, and other personality traits, this blog will aim to unpack the components of extraversion.</p>
-<p>Rather than treating extraversion as a fixed label, this blog asks few questions to determine the components of an “extraverted” person:</p>
-<ol type="1">
-<li>Which behaviors define extraversion most strongly?</li>
-<li>Is extraversion related to one’s race or ethinicity?</li>
-<li>Does extraversion change with age?</li>
-<li></li>
-</ol>
+<p>In this blog, I will explore responses from nearly 20,000 people who completed the Big Five personality test. Instead of just accepting extraversion as a fixed label I will try to look at how different behaviours fit together, how extraversion connects to other personality traits, and whether factors like cultural background make much difference. Ultimately, I’m trying to understand the components of an extraverted person.</p>
 <section id="setup" class="level4">
 <h4 class="anchored" data-anchor-id="setup">Setup</h4>
 <div id="1fe2500d-0c40-44dc-a1d3-db69f2f91755" class="cell" data-execution_count="1">
@@ -350,8 +343,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="is-extraversion-related-to-ones-ethinicity" class="level2">
 <h2 class="anchored" data-anchor-id="is-extraversion-related-to-ones-ethinicity">Is extraversion related to one’s ethinicity?</h2>
 <p>We will now attempt to determine if whether or not there are any observable differences in average extraversion scores based on the ethnic groups in which individuals have associated themselves to.</p>
-<p>I wanted to explore this relationship because cultural norms in relation to expressiveness, social hierarchy and conformity vary across different racial / ethic groups. Personally, growing up in an Asian household, I do believe that conformity is a value imposed in my culture, which I believe contributes to my lower levels of extrovertedness.</p>
-<div id="eb75c698-5047-456c-936a-b3a46574127e" class="cell" data-execution_count="22">
+<p>I wanted to explore this relationship because cultural norms in relation to expressiveness, social hierarchy and conformity vary across different racial / ethic groups. Personally, growing up in an Asian household, I believe that restraint and conformity is a value often imposed in my culture, which I believe contributed to my lower levels of extrovertedness.</p>
+<p>But is this really true?</p>
+<div id="eb75c698-5047-456c-936a-b3a46574127e" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_race <span class="op">=</span> big5_scored_df[[<span class="st">'E'</span>, <span class="st">'race_cat'</span>]].copy()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>race_summary <span class="op">=</span> df_race.groupby(<span class="st">'race_cat'</span>).agg(n<span class="op">=</span>(<span class="st">'E'</span>, <span class="st">'size'</span>), mean_E<span class="op">=</span>(<span class="st">'E'</span>, <span class="st">'mean'</span>), sd_E<span class="op">=</span>(<span class="st">'E'</span>, <span class="st">'std'</span>))</span>
@@ -386,8 +380,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>The bloxplot shows that there is substantial overlap in the distribution of extraversion scoress across different ethnic categories. Although there are small difference in median values, the overall spread of scores is similar across different groups. The results suggest that while modest differences in average extraversion may exist across racial groups in this dataset, the majority of variation in extraversion occurs within groups rather than between them.</p>
-<div id="abad192a-0bd9-4512-b6e3-5a003cb00e19" class="cell" data-execution_count="20">
+<p>The bloxplot shows that there is substantial overlap in the distribution of extraversion scoress across different ethnic categories.</p>
+<p>Although there are small difference in median values, the overall spread of scores is similar across different groups. The results suggest that while modest differences in average extraversion may exist across racial groups in this dataset, the majority of variation in extraversion occurs within groups rather than between them.</p>
+<div id="abad192a-0bd9-4512-b6e3-5a003cb00e19" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>overall_mean <span class="op">=</span> df_plot[<span class="st">'E'</span>].mean()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>race_summary_f[<span class="st">'mean_diff'</span>] <span class="op">=</span> race_summary_f[<span class="st">'mean_E'</span>] <span class="op">-</span> overall_mean</span>
@@ -442,13 +437,13 @@ South East Asian (Chinese, Thai, Malay, Filipino, etc): -1.41</code></pre>
 </div>
 <p>The second plot displays the deviation of each ethnic group’s mean extraversion score from the overall sample average. Although the differences are relatively small, with a total range of approximately 2.19 points, there are still observable variations from the overall mean across groups.</p>
 <p>South East Asian respondents have the lowest average extraversion score relative to the overall mean, scoring about 1.41 points below it. In contrast, West African, Bushmen, Ethiopian respondents show the largest positive deviation at approximately 0.78 points above the mean. Caucasian (Middle East) and Other categories also sit modestly above the overall average, at roughly 0.68 and 0.61 points higher, respectively.</p>
-<p>These results align with my personal account of East Asian cultural norms, where greater emphasis may be placed on restraint and social harmony. However, the difference from the overall mean is relatively small when considered in relation to the much larger range of possible extraversion scores, which span from 10 to 50. The observed deviation of approximately 1.41 points represents only a small fraction of the total scale, implying that ethnic differences don’t contribute too strongly to overall extraversion.</p>
+<p>These results align slightly with my personal account of my cultural norms. However, the difference from the overall mean is relatively small when considered in relation to the much larger range of possible extraversion scores, which span from 10 to 50. The observed deviation in extraversion score of approximately 1.41 points from the overall mean represents only a small fraction of the total scale, implying that ethnic differences don’t contribute too strongly to overall extraversion.</p>
 </section>
 <section id="is-extraversion-defined-by-specific-dominant-behaviours-or-is-it-a-broader-social-orientation" class="level2">
 <h2 class="anchored" data-anchor-id="is-extraversion-defined-by-specific-dominant-behaviours-or-is-it-a-broader-social-orientation">Is extraversion defined by specific dominant behaviours, or is it a broader social orientation?</h2>
-<p>So far, the analysis has treated extraversion as a single composite score derived from ten behavioural questions. However, this raises a deeper question: does extraversion reflect one particularly dominant behaviour, such as talkativeness or attention-seeking, or does it represent a broader notion of social engagement?</p>
-<p>Although the Big Five framework assumes that these items collectively measure a unified trait, it is not immediately obvious whether all behaviours (questions) contribute equally. To investigate this, I apply Principal Component Analysis to the ten extraversion questions. This analysis examines whether a single behaviour dominates the structure of the trait or whether extraversion is derived from a balance between behaviours.</p>
-<div id="cbf3cb6b-ba7c-431f-b50e-7eea35d03b21" class="cell" data-execution_count="23">
+<p>Each personality trait score in the Big Five framework is calculated from ten individual questions. While these items are intended to measure a single underlying construct, this raises an important question: does extraversion reflect one particularly dominant behavioural tendency, such as talkativeness or attention-seeking, or does it instead capture a broader aspect of social interaction?</p>
+<p>Although the Big Five framework assumes that these items collectively measure a unified trait, it is not immediately obvious whether all behaviours (questions) contribute equally. The following analysis will examine whether a single behaviour dominates the structure of the trait or whether extraversion is derived from a balance between behaviours.</p>
+<div id="cbf3cb6b-ba7c-431f-b50e-7eea35d03b21" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -473,7 +468,7 @@ South East Asian (Chinese, Thai, Malay, Filipino, etc): -1.41</code></pre>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>explained_variance.<span class="bu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>PC1     0.512
 PC2     0.090
 PC3     0.081
@@ -487,43 +482,42 @@ PC10    0.033
 dtype: float64</code></pre>
 </div>
 </div>
-<div id="66c6ccdf-cbd2-4e67-895c-3b0efa1b2405" class="cell" data-execution_count="26">
+<div id="66c6ccdf-cbd2-4e67-895c-3b0efa1b2405" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pc1_loadings <span class="op">=</span> loadings[<span class="st">'PC1'</span>].sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pc1_loadings.<span class="bu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
-<pre><code>E5     0.348
-E7     0.345
-E4     0.336
-E3     0.324
-E2     0.322
-E10    0.318
-E1     0.312
-E6     0.291
-E9     0.290
-E8     0.266
-Name: PC1, dtype: float64</code></pre>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[7]</span><span class="ansi-green-fg">, line 1</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">1</span> pc1_loadings = <span class="ansi-yellow-bg">loadings</span>[<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">PC1</span><span class="ansi-yellow-fg">'</span>].sort_values(ascending=<span style="font-weight:bold;color:rgb(0,135,0)">False</span>)
+<span class="ansi-green-fg">      3</span> pc1_loadings.round(<span class="ansi-green-fg">3</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'loadings' is not defined</pre>
 </div>
 </div>
-<div id="b04996b8-762d-4323-911b-bddea6442ee8" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>pc1_loadings.plot(kind<span class="op">=</span><span class="st">'bar'</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"PC1 Loadings for Extraversion Items"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Loading"</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="DOW2_personality_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
-</div>
+<div id="b04996b8-762d-4323-911b-bddea6442ee8" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pc1_loadings.plot(kind<span class="op">=</span><span class="st">'bar'</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"PC1 Loadings for Extraversion Items"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Loading"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Analysing the loadings of first principal component (which is usually the most statsitically significant), we can conclude which aspects of one’s behaviour contribute to extrovertedness. The loadings represent how strongly the question aligns / contributes to the extraversion measure.</p>
 <p>Looking at the loadings shown above, we can see that there is very little variation, with the loadings ranging from 0.266 to 0.348. This relatively narrow range indicates that no single behaviour overwhelmingly defines extraversion. Instead, each of the 10 questions contribute in a broadly similar to an individual’s level of extraversion.</p>
 <p>However, there are specific questions which have greater loading. Here are the top three questions: 1. E5: “Start conversations.” 2. E7: “Talk to a lot of different people at parties.” 3. E4: “Keep in the background.”</p>
 <p>All of these questions are in relation to active outward engagement or initiative, rather than questions around being socially comfortable (E3, E10) or being the center of attention / craving attention (E1, E9, E8) or around how much one talks (E2, E6). From this, we can conclude that although all 10 questions contribute similarly, initiative and social engagement play a slightly greater role in determining an individual’s extraversion score.</p>
+</section>
+<section id="final-comments" class="level2">
+<h2 class="anchored" data-anchor-id="final-comments">Final Comments</h2>
+<p>At the beginning of this post, I asked what actually makes someone extraverted. Is it confidence, warmth, emotional stability, or simply talking more?</p>
+<p>Looking at how extraversion relates to other personality traits, we saw that it is most strongly associated with agreeableness and moderately associated with emotional stability. This suggests that individuals who score higher on extraversion in this dataset also tend to be more socially warm, and somewhat calmer in their emotional responses. Extraversion appears to sit within a broader social and emotional profile rather than functioning as a standalone characteristic.</p>
+<p>When examining differences across ethnic groups, the variation in average extraversion scores was relatively modest. Although some groups sat slightly above or below the overall mean, the differences wer small when compared to the full 10 to 50 range of the scale. Most of the variation in extraversion occured within groups rather than between them. This suggests that while cultural background may shape behaviour to some extent, extraversion in this dataset is primarily driven by individual differences.</p>
+<p>Finally, analysing the internal structure of extraversion through Principal Component Analysis showed that no single behaviour overwhelmingly defines the trait. All ten questions contributed in broadly similar ways. However, behaviours related to initiating conversations and engaging actively with others showed slightly stronger alignment with the dominant component. This indicates that extraversion is less about simply talking more or seeking attention, and more about a consistent tendency to step into social situations and participate actively.</p>
+<p>Taken together, these findings provide a clearer answer to the question I began with. What actually “makes” an extraverted person is not one single defining behaviour, nor a single cultural influence, nor just emotional steadiness. Rather, it is a consistent inclination to engage with others and to step forward socially.</p>
 
 
 </section>
