@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Daniel Park">
+<meta name="dcterms.date" content="2026-02-19">
+<meta name="description" content="The Winter Olympics are often dominated by cold, mountainous nations with deep winter sports traditions. But what happens when a warm, relatively flat country like Australia enters the picture?">
 
-<title>Winter Olympics Dataset (DOW #3) – Daniel’s Data Stories</title>
+<title>Blog 03: Analysis of Winter Olympics Data – Daniel’s Data Stories</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -75,7 +78,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-fadc7197feb5b0cc1514f5252acd9486.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cd884f2855776405ca61470c593c983e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -148,14 +151,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Winter Olympics Dataset (DOW #3)</h1>
-                      </div>
+      <h1 class="title">Blog 03: Analysis of Winter Olympics Data</h1>
+                  <div>
+        <div class="description">
+          The Winter Olympics are often dominated by cold, mountainous nations with deep winter sports traditions. But what happens when a warm, relatively flat country like Australia enters the picture?
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">olympics</div>
+                <div class="quarto-category">data stories</div>
+                <div class="quarto-category">data visualization</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Daniel Park </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 19, 2026</p>
+      </div>
+    </div>
     
       
     </div>
@@ -172,30 +197,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="sources" class="level3">
-<h3 class="anchored" data-anchor-id="sources">Sources</h3>
-<ul>
-<li>https://www.olympedia.org/</li>
-<li>https://github.com/KeithGalli/Olympics-Dataset/</li>
-</ul>
-</section>
-<section id="datasets" class="level3">
-<h3 class="anchored" data-anchor-id="datasets">Datasets</h3>
-<ul>
-<li>In the <code>data</code> folder:
-<ol type="1">
-<li><code>winter_olympics_medals.csv</code> - subset of <code>results.csv</code> from https://github.com/KeithGalli/Olympics-Dataset/ for just <strong>Winter Olympics</strong></li>
-<li><code>bios.csv</code> - information about athletes in <code>results.csv</code> (both Winter and Summer games)</li>
-<li><code>bios_locs.csv</code> - adding geospatial locations for birth place to <code>bios.csv</code></li>
-<li><code>populations.csv</code> - population counts for country by year from 1960-2023</li>
-<li><code>country-and-continent-codes-list.csv</code> - mapping between 2- and 3-character country codes and names and numbers</li>
-</ol></li>
-</ul>
-<hr>
-</section>
+<p>The Winter Olympics are built for snow, ice and mountains. Unsurprisingly, countries like Norway, Canada and Switzerland dominate the medal table year after year.</p>
+<p>However, Australia seems to be an exception to this story.</p>
+<p><img src="img/ausolympics.png" width="60%"> Source: <a href="https://www.theguardian.com/sport/2026/feb/17/how-did-australia-get-so-good-winter-olympics-gold-medals-tally-count">The Guardian</a></p>
+<p>In recent years, Australia’s performance at the winter olympics has been consistently improving, with them putting up the best performance yet this year, obtaining a total of 6 medals (at the time of writing this blog), beating the previous record by 2 medals set in 2022. While this is by no means as impressive as the 37 medals won by the first place, Norway, Australia is placed 14th on the leaderboard and all 13 countries which have performed better are in the Northern Hemisphere.</p>
+<p>According to The Guardian article, it is said that their success has come “through clever strategy and targeted resource allocation.” Out of the 16 different disciplines in the winter olympics, all of Australia’s medals came from two: freestyle skiing (moguls), and snowboarding.</p>
+<p>This contrast raised a broader question for me:</p>
+<p>Do traditionally “wintry” countries succeed because they diversify across many disciplines, while warmer nations survive through strategic specialisation? And is diversification a luxury available only to large, cold countries?</p>
+<p>Using historical Winter Olympics data, this analysis explores whether geography shapes not just who wins, but how they win.</p>
 <section id="setup" class="level3">
 <h3 class="anchored" data-anchor-id="setup">Setup</h3>
-<div id="b82bad2c-2c30-4511-85be-81bf65194b94" class="cell" data-execution_count="2">
+<div id="b82bad2c-2c30-4511-85be-81bf65194b94" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -203,8 +215,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>wolympics_df <span class="op">=</span> pd.read_csv(<span class="st">'data/winter_olympics_medals.csv'</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>wolympics_df.sample(<span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>wolympics_df <span class="op">=</span> wolympics_df[<span class="op">~</span>wolympics_df[<span class="st">'year'</span>].isin([<span class="dv">2012</span>,<span class="dv">2016</span>])]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>wolympics_df.sample(<span class="dv">20</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>bios_df <span class="op">=</span> pd.read_csv(<span class="st">'data/bios.csv'</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pop_df <span class="op">=</span> pd.read_csv(<span class="st">'data/populations.csv'</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>medals_df <span class="op">=</span> wolympics_df[wolympics_df[<span class="st">"medal"</span>].notna()].copy()</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>world <span class="op">=</span> gpd.read_file(<span class="st">"data/worldmap.json"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>region_lookup <span class="op">=</span> world[[<span class="st">"iso_a3"</span>, <span class="st">"continent"</span>, <span class="st">"region_un"</span>, <span class="st">"subregion"</span>]].copy()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="4edac43d-f960-4b88-b569-11144f15884e" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>country_totals <span class="op">=</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    medals_df.groupby(<span class="st">"noc"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"medals_total"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>country_totals.head(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
 <div>
 
 
@@ -212,543 +243,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">year</th>
-<th data-quarto-table-cell-role="th">type</th>
-<th data-quarto-table-cell-role="th">discipline</th>
-<th data-quarto-table-cell-role="th">event</th>
-<th data-quarto-table-cell-role="th">as</th>
-<th data-quarto-table-cell-role="th">athlete_id</th>
 <th data-quarto-table-cell-role="th">noc</th>
-<th data-quarto-table-cell-role="th">team</th>
-<th data-quarto-table-cell-role="th">place</th>
-<th data-quarto-table-cell-role="th">tied</th>
-<th data-quarto-table-cell-role="th">medal</th>
+<th data-quarto-table-cell-role="th">medals_total</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">32760</th>
-<td>1998.0</td>
-<td>Winter</td>
-<td>Ski Jumping (Skiing)</td>
-<td>Large Hill, Individual, Men (Olympic)</td>
-<td>Dmitry Chvykov</td>
-<td>99852</td>
-<td>KAZ</td>
-<td>NaN</td>
-<td>49.0</td>
-<td>False</td>
-<td>NaN</td>
+<th data-quarto-table-cell-role="th">5</th>
+<td>CAN</td>
+<td>795</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">9268</th>
-<td>1984.0</td>
-<td>Winter</td>
-<td>Ski Jumping (Skiing)</td>
-<td>Large Hill, Individual, Men (Olympic)</td>
-<td>Rolf Åge Berg</td>
-<td>84023</td>
-<td>NOR</td>
-<td>NaN</td>
-<td>52.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">36066</th>
-<td>2006.0</td>
-<td>Winter</td>
-<td>Nordic Combined (Skiing)</td>
-<td>Sprint, Men (Olympic)</td>
-<td>Jaakko Tallus</td>
-<td>101079</td>
-<td>FIN</td>
-<td>NaN</td>
-<td>5.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">36334</th>
-<td>2002.0</td>
-<td>Winter</td>
-<td>Ski Jumping (Skiing)</td>
-<td>Normal Hill, Individual, Men (Olympic)</td>
-<td>Ildar Fatkullin</td>
-<td>101154</td>
-<td>RUS</td>
-<td>NaN</td>
-<td>41.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">20450</th>
-<td>1998.0</td>
-<td>Winter</td>
-<td>Biathlon</td>
-<td>10 kilometres Sprint, Men (Olympic)</td>
-<td>Mikael Löfgren</td>
-<td>92003</td>
-<td>SWE</td>
-<td>NaN</td>
-<td>25.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">61514</th>
-<td>2020.0</td>
-<td>Winter</td>
-<td>Nordic Combined (Skiing)</td>
-<td>Normal Hill / 6 km, Individual, Boys (YOG)</td>
-<td>Mateusz Jarosz</td>
-<td>139882</td>
-<td>POL</td>
-<td>NaN</td>
-<td>14.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">40404</th>
-<td>2006.0</td>
-<td>Winter</td>
-<td>Ski Jumping (Skiing)</td>
-<td>Large Hill, Individual, Men (Olympic)</td>
-<td>Dmitry Vasilyev</td>
-<td>109730</td>
-<td>RUS</td>
-<td>NaN</td>
-<td>17.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1659</th>
-<td>1994.0</td>
-<td>Winter</td>
-<td>Biathlon</td>
-<td>7.5 kilometres Sprint, Women (Olympic)</td>
-<td>Catarina Eklund</td>
-<td>81013</td>
-<td>SWE</td>
-<td>NaN</td>
-<td>59.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">33823</th>
-<td>2006.0</td>
-<td>Winter</td>
-<td>Cross Country Skiing (Skiing)</td>
-<td>30 kilometres Skiathlon, Men (Olympic)</td>
-<td>Lukáš Bauer</td>
-<td>100078</td>
-<td>CZE</td>
-<td>NaN</td>
-<td>10.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">37982</th>
-<td>2010.0</td>
-<td>Winter</td>
-<td>Speed Skating (Skating)</td>
-<td>1,000 metres, Men (Olympic)</td>
-<td>Nick Pearson</td>
-<td>101542</td>
+<th data-quarto-table-cell-role="th">51</th>
 <td>USA</td>
-<td>NaN</td>
-<td>7.0</td>
-<td>False</td>
-<td>NaN</td>
+<td>772</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">51614</th>
-<td>2018.0</td>
-<td>Winter</td>
-<td>Bobsleigh (Bobsleigh)</td>
-<td>Four, Open (Olympic)</td>
-<td>Oskars Ķibermanis</td>
-<td>128118</td>
-<td>LAT</td>
-<td>Latvia 2</td>
-<td>10.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">10431</th>
-<td>1992.0</td>
-<td>Winter</td>
-<td>Luge</td>
-<td>Singles, Men (Olympic)</td>
-<td>Eduard Burmistrov</td>
-<td>84492</td>
-<td>EUN</td>
-<td>NaN</td>
-<td>16.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">24102</th>
-<td>1994.0</td>
-<td>Winter</td>
-<td>Ice Hockey (Ice Hockey)</td>
-<td>Ice Hockey, Men (Olympic)</td>
-<td>Dušan Pohoreleč</td>
-<td>96500</td>
-<td>SVK</td>
-<td>Slovakia</td>
-<td>6.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">11218</th>
-<td>1976.0</td>
-<td>Winter</td>
-<td>Speed Skating (Skating)</td>
-<td>5,000 metres, Men (Olympic)</td>
-<td>Colin Coates</td>
-<td>84814</td>
-<td>AUS</td>
-<td>NaN</td>
-<td>10.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">48041</th>
-<td>2014.0</td>
-<td>Winter</td>
-<td>Snowboarding (Skiing)</td>
-<td>Halfpipe, Women (Olympic)</td>
-<td>Rana Okada</td>
-<td>119612</td>
-<td>JPN</td>
-<td>NaN</td>
-<td>5.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">54754</th>
-<td>2018.0</td>
-<td>Winter</td>
-<td>Biathlon</td>
-<td>10 kilometres Sprint, Men (Olympic)</td>
-<td>Adam Václavík</td>
-<td>137011</td>
-<td>CZE</td>
-<td>NaN</td>
-<td>73.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">60884</th>
-<td>2020.0</td>
-<td>Winter</td>
-<td>3-on-3 Ice Hockey (Ice Hockey)</td>
-<td>3-on-3 Ice Hockey, Girls (YOG)</td>
-<td>Polina Lubenets</td>
-<td>139437</td>
-<td>UKR</td>
-<td>Team Orange</td>
-<td>8.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">51754</th>
-<td>2014.0</td>
-<td>Winter</td>
-<td>Snowboarding (Skiing)</td>
-<td>Parallel Slalom, Women (Olympic)</td>
-<td>Michelle Dekker</td>
-<td>128164</td>
-<td>NED</td>
-<td>NaN</td>
-<td>19.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">37330</th>
-<td>2002.0</td>
-<td>Winter</td>
-<td>Speed Skating (Skating)</td>
-<td>500 metres, Men (Olympic)</td>
-<td>Kuniomi Haneishi</td>
-<td>101363</td>
-<td>JPN</td>
-<td>NaN</td>
-<td>12.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">46054</th>
-<td>2014.0</td>
-<td>Winter</td>
-<td>Cross Country Skiing (Skiing)</td>
-<td>15 kilometres, Men (Olympic)</td>
-<td>Eldar Rønning</td>
-<td>118756</td>
+<th data-quarto-table-cell-role="th">34</th>
 <td>NOR</td>
-<td>NaN</td>
-<td>12.0</td>
-<td>False</td>
-<td>NaN</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="183ec7e3-fdfe-46af-a81b-1b8eff70a0ea" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>wolympics_df[<span class="st">'discipline'</span>].value_counts().to_frame()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">count</th>
+<td>600</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">discipline</th>
-<th data-quarto-table-cell-role="th"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Cross Country Skiing (Skiing)</th>
-<td>11791</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Alpine Skiing (Skiing)</th>
-<td>11102</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Biathlon</th>
-<td>7138</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Speed Skating (Skating)</th>
-<td>6734</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Ice Hockey (Ice Hockey)</th>
-<td>6731</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Bobsleigh (Bobsleigh)</th>
-<td>3576</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Figure Skating (Skating)</th>
-<td>2895</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Ski Jumping (Skiing)</th>
-<td>2885</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Short Track Speed Skating (Skating)</th>
-<td>2509</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Luge</th>
-<td>1971</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Snowboarding (Skiing)</th>
-<td>1840</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Freestyle Skiing (Skiing)</th>
-<td>1837</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Nordic Combined (Skiing)</th>
-<td>1759</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Curling</th>
-<td>923</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Skeleton (Bobsleigh)</th>
-<td>335</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3-on-3 Ice Hockey (Ice Hockey)</th>
-<td>195</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Ski Mountaineering</th>
-<td>138</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Mixed Sports</th>
-<td>105</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Military Ski Patrol (Skiing)</th>
-<td>36</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Winter Pentathlon</th>
-<td>6</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Bandy</th>
-<td>1</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Speed Skiing (Skiing)</th>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="c9a5e95c-b2da-4180-a54b-f3336730c219" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>wolympics_df.value_counts(<span class="st">'year'</span>).to_frame()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">count</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">year</th>
-<th data-quarto-table-cell-role="th"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2018.0</th>
-<td>5140</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">2014.0</th>
-<td>4940</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2022.0</th>
-<td>4744</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">2006.0</th>
-<td>4438</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2010.0</th>
-<td>4417</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">2002.0</th>
-<td>4158</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2020.0</th>
-<td>3988</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1998.0</th>
-<td>3682</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1992.0</th>
-<td>3544</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1994.0</th>
-<td>3205</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1988.0</th>
-<td>2887</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1984.0</th>
-<td>2149</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1968.0</th>
-<td>1920</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1976.0</th>
-<td>1881</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1964.0</th>
-<td>1804</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1980.0</th>
-<td>1762</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1972.0</th>
-<td>1678</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1956.0</th>
-<td>1349</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1948.0</th>
-<td>1150</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1960.0</th>
-<td>1143</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1952.0</th>
-<td>1120</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1936.0</th>
-<td>977</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1928.0</th>
-<td>636</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1924.0</th>
+<th data-quarto-table-cell-role="th">20</th>
+<td>GER</td>
 <td>551</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">1932.0</th>
-<td>550</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">2012.0</th>
-<td>412</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2016.0</th>
-<td>284</td>
+<th data-quarto-table-cell-role="th">14</th>
+<td>FIN</td>
+<td>513</td>
 </tr>
 </tbody>
 </table>
@@ -756,138 +279,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>https://en.wikipedia.org/wiki/Soviet_Union_at_the_Olympics https://en.wikipedia.org/wiki/Unified_Team_at_the_Olympics https://en.wikipedia.org/wiki/Russia_at_the_Olympics</p>
-<p>https://en.wikipedia.org/wiki/United_States_at_the_2026_Winter_Olympics</p>
-</section>
-<section id="competitors-by-country" class="level3">
-<h3 class="anchored" data-anchor-id="competitors-by-country">Competitors by Country</h3>
-<div id="f42d5667-e613-42de-9e20-623bb56bb699" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>country_cnt_since2002<span class="op">=</span>wolympics_df.query(<span class="st">'year&gt;2000'</span>).value_counts(<span class="st">'noc'</span>).to_frame()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>country_cnt_since2002.shape</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>(118, 1)</code></pre>
-</div>
-</div>
-<div id="247ea9c2-3c66-4b67-81b9-9759a62420d2" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>country_cnt_since2002.head(<span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">count</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">noc</th>
-<th data-quarto-table-cell-role="th"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">USA</th>
-<td>2181</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">CAN</th>
-<td>2118</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">GER</th>
-<td>1819</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">ITA</th>
-<td>1604</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">SUI</th>
-<td>1472</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">RUS</th>
-<td>1409</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">CZE</th>
-<td>1309</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">NOR</th>
-<td>1300</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">JPN</th>
-<td>1300</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">FRA</th>
-<td>1284</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">AUT</th>
-<td>1181</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">CHN</th>
-<td>1073</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">FIN</th>
-<td>1054</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">SWE</th>
-<td>1053</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">KOR</th>
-<td>841</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">SLO</th>
-<td>805</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">POL</th>
-<td>774</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">SVK</th>
-<td>737</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">UKR</th>
-<td>683</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">KAZ</th>
-<td>682</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="b9e0fc47-abf5-4a5a-8718-ebe89cc5ac30" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>world_gdf <span class="op">=</span> gpd.read_file(<span class="st">'data/worldmap.json'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="0d981bab-b732-48ac-aceb-1023e3ba388e" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>world_gdf.plot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9bcd5401-db10-4f8c-8c70-c5715fca345a" class="cell" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>medals_with_region <span class="op">=</span> country_totals.merge(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    region_lookup,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"noc"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"iso_a3"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>world_medals <span class="op">=</span> world.merge(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    country_totals,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"iso_a3"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"noc"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>world_medals[<span class="st">"medals_total"</span>] <span class="op">=</span> world_medals[<span class="st">"medals_total"</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> world_medals.plot(column<span class="op">=</span><span class="st">"medals_total"</span>, legend<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">8</span>))</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Winter Olympic Medals by Country (All Time)"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="DOW3_olympics_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="DOW3_olympics_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="a7cc5473-388f-47e6-a2a2-86f610e13b11" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>world_gdf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="bb405ff0-0220-48d2-81d4-d063a14954ee" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>country_discipline <span class="op">=</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    medals_df.groupby([<span class="st">"noc"</span>, <span class="st">"discipline"</span>])</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"medals"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3945a83e-e036-4132-9a8b-ded1d89876d5" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diversification_metrics(df):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> df[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    shares <span class="op">=</span> df[<span class="st">"medals"</span>] <span class="op">/</span> total</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.Series({</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"medals_total"</span>: total,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"n_disciplines"</span>: df[<span class="st">"discipline"</span>].nunique(),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"top_share"</span>: shares.<span class="bu">max</span>(),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"hhi"</span>: (shares <span class="op">**</span> <span class="dv">2</span>).<span class="bu">sum</span>(),   <span class="co"># Herfindahl-Hirschman Index</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> (</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    country_discipline.groupby(<span class="st">"noc"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(diversification_metrics)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>div_metrics.sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="31">
 <div>
 
 
@@ -895,331 +343,443 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">featurecla</th>
-<th data-quarto-table-cell-role="th">scalerank</th>
-<th data-quarto-table-cell-role="th">labelrank</th>
-<th data-quarto-table-cell-role="th">sovereignt</th>
-<th data-quarto-table-cell-role="th">sov_a3</th>
-<th data-quarto-table-cell-role="th">adm0_dif</th>
-<th data-quarto-table-cell-role="th">level</th>
-<th data-quarto-table-cell-role="th">type</th>
-<th data-quarto-table-cell-role="th">tlc</th>
-<th data-quarto-table-cell-role="th">admin</th>
-<th data-quarto-table-cell-role="th">...</th>
-<th data-quarto-table-cell-role="th">fclass_id</th>
-<th data-quarto-table-cell-role="th">fclass_pl</th>
-<th data-quarto-table-cell-role="th">fclass_gr</th>
-<th data-quarto-table-cell-role="th">fclass_it</th>
-<th data-quarto-table-cell-role="th">fclass_nl</th>
-<th data-quarto-table-cell-role="th">fclass_se</th>
-<th data-quarto-table-cell-role="th">fclass_bd</th>
-<th data-quarto-table-cell-role="th">fclass_ua</th>
-<th data-quarto-table-cell-role="th">filename</th>
-<th data-quarto-table-cell-role="th">geometry</th>
+<th data-quarto-table-cell-role="th">noc</th>
+<th data-quarto-table-cell-role="th">medals_total</th>
+<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">top_share</th>
+<th data-quarto-table-cell-role="th">hhi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">5</th>
+<td>CAN</td>
+<td>795.0</td>
+<td>14.0</td>
+<td>0.537107</td>
+<td>0.319296</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">51</th>
+<td>USA</td>
+<td>772.0</td>
+<td>13.0</td>
+<td>0.409326</td>
+<td>0.215053</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">34</th>
+<td>NOR</td>
+<td>600.0</td>
+<td>11.0</td>
+<td>0.378333</td>
+<td>0.212717</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">20</th>
+<td>GER</td>
+<td>551.0</td>
+<td>14.0</td>
+<td>0.172414</td>
+<td>0.113284</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>FIN</td>
+<td>513.0</td>
+<td>13.0</td>
+<td>0.467836</td>
+<td>0.320908</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">45</th>
+<td>SWE</td>
+<td>512.0</td>
+<td>11.0</td>
+<td>0.455078</td>
+<td>0.299896</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">50</th>
+<td>URS</td>
+<td>440.0</td>
+<td>10.0</td>
+<td>0.381818</td>
+<td>0.245733</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>AUT</td>
+<td>361.0</td>
+<td>14.0</td>
+<td>0.396122</td>
+<td>0.214340</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">43</th>
+<td>SUI</td>
+<td>347.0</td>
+<td>15.0</td>
+<td>0.265130</td>
+<td>0.169630</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">40</th>
+<td>RUS</td>
+<td>319.0</td>
+<td>16.0</td>
+<td>0.210031</td>
+<td>0.147650</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="de5e3ab1-b815-47f6-b0c0-7f0a3bf80e08" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aus <span class="op">=</span> country_discipline[country_discipline[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>].sort_values(<span class="st">"medals"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>aus</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">noc</th>
+<th data-quarto-table-cell-role="th">discipline</th>
+<th data-quarto-table-cell-role="th">medals</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>AUS</td>
+<td>Freestyle Skiing (Skiing)</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>AUS</td>
+<td>Snowboarding (Skiing)</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">3</th>
+<td>AUS</td>
+<td>Short Track Speed Skating (Skating)</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">0</th>
+<td>AUS</td>
+<td>3-on-3 Ice Hockey (Ice Hockey)</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1</th>
+<td>AUS</td>
+<td>Alpine Skiing (Skiing)</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">4</th>
+<td>AUS</td>
+<td>Skeleton (Bobsleigh)</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="fe2f3d3f-987e-42c5-a29e-55c505b2ed14" class="cell" data-execution_count="35">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> top_k_share(df, k<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> df[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    topk <span class="op">=</span> df.sort_values(<span class="st">"medals"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(k)[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> topk <span class="op">/</span> total <span class="cf">if</span> total <span class="cf">else</span> np.nan</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>top2 <span class="op">=</span> (</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    country_discipline.groupby(<span class="st">"noc"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> x: top_k_share(x, k<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"top2_share"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Australia</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>top2[top2[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">noc</th>
+<th data-quarto-table-cell-role="th">top2_share</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>5</td>
-<td>Costa Rica</td>
-<td>CRI</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>Costa Rica</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>CRI.geojson</td>
-<td>POLYGON ((-82.5462 9.56613, -82.93289 9.47681,...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>5</td>
-<td>Nicaragua</td>
-<td>NIC</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>Nicaragua</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NIC.geojson</td>
-<td>POLYGON ((-83.65561 10.93876, -83.89505 10.726...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>5</td>
-<td>Haiti</td>
-<td>HTI</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>Haiti</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>HTI.geojson</td>
-<td>POLYGON ((-71.71236 19.71446, -71.62487 19.169...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>5</td>
-<td>Dominican Republic</td>
-<td>DOM</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>Dominican Republic</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>DOM.geojson</td>
-<td>POLYGON ((-71.7083 18.045, -71.68774 18.31666,...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>6</td>
-<td>El Salvador</td>
-<td>SLV</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>El Salvador</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>SLV.geojson</td>
-<td>POLYGON ((-89.35333 14.42413, -89.05851 14.340...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">...</th>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">172</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>3</td>
-<td>France</td>
-<td>FR1</td>
-<td>1</td>
-<td>2</td>
-<td>Dependency</td>
-<td>1</td>
-<td>New Caledonia</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NCL.geojson</td>
-<td>POLYGON ((165.77999 -21.08, 166.59999 -21.7000...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">173</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>3</td>
-<td>Solomon Islands</td>
-<td>SLB</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>Solomon Islands</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>SLB.geojson</td>
-<td>MULTIPOLYGON (((162.11902 -10.48272, 162.39865...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">174</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>4</td>
-<td>Vanuatu</td>
-<td>VUT</td>
-<td>0</td>
-<td>2</td>
-<td>Sovereign country</td>
-<td>1</td>
-<td>Vanuatu</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>VUT.geojson</td>
-<td>MULTIPOLYGON (((167.2168 -15.89185, 167.84488 ...</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">175</th>
-<td>Admin-0 country</td>
-<td>1</td>
-<td>4</td>
-<td>Antarctica</td>
-<td>ATA</td>
-<td>0</td>
-<td>2</td>
-<td>Indeterminate</td>
-<td>1</td>
-<td>Antarctica</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>ATA.geojson</td>
-<td>MULTIPOLYGON (((-48.66062 -78.04702, -48.1514 ...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">176</th>
-<td>Admin-0 country</td>
-<td>3</td>
-<td>6</td>
-<td>France</td>
-<td>FR1</td>
-<td>1</td>
-<td>2</td>
-<td>Dependency</td>
-<td>1</td>
-<td>French Southern and Antarctic Lands</td>
-<td>...</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>NaN</td>
-<td>ATF.geojson</td>
-<td>POLYGON ((68.935 -48.625, 69.58 -48.94, 70.525...</td>
+<td>AUS</td>
+<td>0.615385</td>
 </tr>
 </tbody>
 </table>
 
-<p>177 rows × 170 columns</p>
 </div>
 </div>
 </div>
-<div id="ee4a009d-c5cc-445e-aab0-b83bf09d22ba" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>combined_gdf <span class="op">=</span> pd.merge(world_gdf, </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>         country_cnt_since2002,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>         left_on<span class="op">=</span><span class="st">'sov_a3'</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         right_on<span class="op">=</span><span class="st">'noc'</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>         how<span class="op">=</span><span class="st">'outer'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a9519713-112c-49b9-be19-9a42bdc06c01" class="cell" data-execution_count="39">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pop_df.head()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pop_df.columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="39">
+<pre><code>Index(['Country Name', 'Country Code', '1960', '1961', '1962', '1963', '1964',
+       '1965', '1966', '1967', '1968', '1969', '1970', '1971', '1972', '1973',
+       '1974', '1975', '1976', '1977', '1978', '1979', '1980', '1981', '1982',
+       '1983', '1984', '1985', '1986', '1987', '1988', '1989', '1990', '1991',
+       '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000',
+       '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009',
+       '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018',
+       '2019', '2020', '2021', '2022', '2023'],
+      dtype='str')</code></pre>
 </div>
-<div id="6576feae-f048-4ebd-bc63-6c4233ad65b0" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>combined_gdf[<span class="st">'count'</span>]<span class="op">=</span>combined_gdf[<span class="st">'count'</span>].fillna(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="de13d391-d3b2-4e64-9119-45ddd3c94f14" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>combined_gdf.plot(column<span class="op">=</span><span class="st">'count'</span>, </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                  legend<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                  legend_kwds<span class="op">=</span>{</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">'shrink'</span>: <span class="fl">0.3</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                      </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                   },</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                   figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>),</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                vmin<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                vmax<span class="op">=</span><span class="dv">2200</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                   cmap<span class="op">=</span><span class="st">'Set2'</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'off'</span>)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
+<div id="f89f78f6-a92b-4865-84cf-10cf4b8f83f4" class="cell" data-execution_count="40">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pop_long <span class="op">=</span> pop_df.melt(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    id_vars<span class="op">=</span>[<span class="st">"Country Name"</span>, <span class="st">"Country Code"</span>],</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    var_name<span class="op">=</span><span class="st">"year"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    value_name<span class="op">=</span><span class="st">"population"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>pop_long[<span class="st">"year"</span>] <span class="op">=</span> pop_long[<span class="st">"year"</span>].astype(<span class="bu">int</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>pop_long <span class="op">=</span> pop_long.rename(columns<span class="op">=</span>{<span class="st">"Country Code"</span>: <span class="st">"noc"</span>})</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>medals_with_pop <span class="op">=</span> medals_df.merge(pop_long[[<span class="st">"noc"</span>, <span class="st">"year"</span>, <span class="st">"population"</span>]],</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                                  on<span class="op">=</span>[<span class="st">"noc"</span>, <span class="st">"year"</span>],</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                                  how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>country_pop <span class="op">=</span> (</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    medals_with_pop.groupby(<span class="st">"noc"</span>)[<span class="st">"population"</span>]</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    .median()</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"population_median"</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.merge(country_pop, on<span class="op">=</span><span class="st">"noc"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>div_metrics.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="40">
 <div>
-<figure class="figure">
-<p><img src="DOW3_olympics_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
-</figure>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">noc</th>
+<th data-quarto-table-cell-role="th">medals_total</th>
+<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">top_share</th>
+<th data-quarto-table-cell-role="th">hhi</th>
+<th data-quarto-table-cell-role="th">population_median_x</th>
+<th data-quarto-table-cell-role="th">population_median_y</th>
+<th data-quarto-table-cell-role="th">population_median</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>AUS</td>
+<td>26.0</td>
+<td>6.0</td>
+<td>0.346154</td>
+<td>0.245562</td>
+<td>23475686.0</td>
+<td>23475686.0</td>
+<td>23475686.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>AUT</td>
+<td>361.0</td>
+<td>14.0</td>
+<td>0.396122</td>
+<td>0.214340</td>
+<td>8268641.0</td>
+<td>8268641.0</td>
+<td>8268641.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>BEL</td>
+<td>18.0</td>
+<td>6.0</td>
+<td>0.500000</td>
+<td>0.314815</td>
+<td>11538604.0</td>
+<td>11538604.0</td>
+<td>11538604.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>BLR</td>
+<td>25.0</td>
+<td>4.0</td>
+<td>0.600000</td>
+<td>0.465600</td>
+<td>9448515.0</td>
+<td>9448515.0</td>
+<td>9448515.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>BUL</td>
+<td>7.0</td>
+<td>4.0</td>
+<td>0.428571</td>
+<td>0.306122</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="d9f5a979-7c1c-40da-b010-0b8660ba610f" class="cell" data-execution_count="42">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>div_metrics[<span class="st">"size_bucket"</span>] <span class="op">=</span> pd.qcut(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    div_metrics[<span class="st">"population_median"</span>],</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    q<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>[<span class="st">"small"</span>, <span class="st">"medium"</span>, <span class="st">"large"</span>]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>summary_by_size <span class="op">=</span> (</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    div_metrics.groupby(<span class="st">"size_bucket"</span>)[[<span class="st">"medals_total"</span>, <span class="st">"n_disciplines"</span>, <span class="st">"top_share"</span>, <span class="st">"hhi"</span>]]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    .median()</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>summary_by_size</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">size_bucket</th>
+<th data-quarto-table-cell-role="th">medals_total</th>
+<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">top_share</th>
+<th data-quarto-table-cell-role="th">hhi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>small</td>
+<td>11.0</td>
+<td>4.0</td>
+<td>0.666667</td>
+<td>0.555556</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>medium</td>
+<td>21.5</td>
+<td>4.5</td>
+<td>0.500000</td>
+<td>0.342169</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>large</td>
+<td>132.0</td>
+<td>8.0</td>
+<td>0.409326</td>
+<td>0.244444</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="b1ee713b-96f6-44d5-a9d2-a65437eb9dac" class="cell" data-execution_count="44">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>country_meta <span class="op">=</span> world[[<span class="st">"iso_a3"</span>, <span class="st">"continent"</span>]].copy()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>country_meta <span class="op">=</span> country_meta.rename(columns<span class="op">=</span>{<span class="st">"iso_a3"</span>: <span class="st">"noc"</span>})</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you have: noc, continent</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.merge(country_meta[[<span class="st">"noc"</span>, <span class="st">"continent"</span>]], on<span class="op">=</span><span class="st">"noc"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>div_metrics.groupby(<span class="st">"continent"</span>)[[<span class="st">"n_disciplines"</span>, <span class="st">"top_share"</span>, <span class="st">"hhi"</span>, <span class="st">"medals_total"</span>]].median().sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">top_share</th>
+<th data-quarto-table-cell-role="th">hhi</th>
+<th data-quarto-table-cell-role="th">medals_total</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">continent</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">North America</th>
+<td>13.0</td>
+<td>0.537107</td>
+<td>0.319296</td>
+<td>772.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Europe</th>
+<td>6.0</td>
+<td>0.467836</td>
+<td>0.314815</td>
+<td>29.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Oceania</th>
+<td>5.5</td>
+<td>0.323077</td>
+<td>0.242781</td>
+<td>18.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Asia</th>
+<td>2.0</td>
+<td>0.729167</td>
+<td>0.562018</td>
+<td>4.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">South America</th>
+<td>1.0</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
 </div>
 </div>
 </div>
