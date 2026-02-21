@@ -225,55 +225,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>world <span class="op">=</span> gpd.read_file(<span class="st">"data/worldmap.json"</span>)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>region_lookup <span class="op">=</span> world[[<span class="st">"iso_a3"</span>, <span class="st">"continent"</span>, <span class="st">"region_un"</span>, <span class="st">"subregion"</span>]].copy()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We will first establish which countries dominate the winter olympics.</p>
-<div id="4edac43d-f960-4b88-b569-11144f15884e" class="cell" data-execution_count="17">
+</section>
+<section id="who-dominates-the-winter-olympics" class="level3">
+<h3 class="anchored" data-anchor-id="who-dominates-the-winter-olympics">Who dominates the Winter Olympics?</h3>
+<div id="0fbefce8-b4e8-42d2-9c65-b974f5f7318b" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>country_totals <span class="op">=</span> (</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    medals_df.groupby(<span class="st">"noc"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"medals_total"</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>topN <span class="op">=</span> <span class="dv">10</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>top_countries <span class="op">=</span> country_totals.head(topN).copy()</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ax.barh(top_countries[<span class="st">"noc"</span>][::<span class="op">-</span><span class="dv">1</span>], top_countries[<span class="st">"medals_total"</span>][::<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="ss">f"Top </span><span class="sc">{</span>topN<span class="sc">}</span><span class="ss"> Countries by Total Winter Olympic Medals (All Time)"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Total medals"</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">""</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="DOW3_olympics_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
-</figure>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-</div>
-<div id="9bcd5401-db10-4f8c-8c70-c5715fca345a" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>medals_with_region <span class="op">=</span> country_totals.merge(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    region_lookup,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"noc"</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"iso_a3"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>world_medals <span class="op">=</span> world.merge(</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    country_totals,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"iso_a3"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"noc"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<div id="4edac43d-f960-4b88-b569-11144f15884e" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>topN <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>top_countries <span class="op">=</span> country_totals.head(topN).copy()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>plt.barh(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    top_countries[<span class="st">"noc"</span>][::<span class="op">-</span><span class="dv">1</span>],</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    top_countries[<span class="st">"medals_total"</span>][::<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"Top </span><span class="sc">{</span>topN<span class="sc">}</span><span class="ss"> Countries by Total Winter Olympic Medals (All Time)"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Total medals"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">""</span>)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>world_medals[<span class="st">"medals_total"</span>] <span class="op">=</span> world_medals[<span class="st">"medals_total"</span>].fillna(<span class="dv">0</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> world_medals.plot(column<span class="op">=</span><span class="st">"medals_total"</span>, legend<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">8</span>))</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Winter Olympic Medals by Country (All Time)"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -282,68 +261,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="de5e3ab1-b815-47f6-b0c0-7f0a3bf80e08" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>country_discipline <span class="op">=</span> (</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    medals_df.groupby([<span class="st">"noc"</span>, <span class="st">"discipline"</span>])</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"medals"</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>aus <span class="op">=</span> country_discipline[country_discipline[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>].sort_values(<span class="st">"medals"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>aus</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>aus_by_year <span class="op">=</span> (</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    medals_df[medals_df[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>]</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"year"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    .size()</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"medals"</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"year"</span>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<p>Looking at the above bar graph, we can see that Canada and the United States dominate, having taken home 767 and 769 medals overall respectively.</p>
+<p>Additionally, we can see that the top 10 countries (Canada, USA, Norway, Germany, Finland, Sweden, Soviet Union, Austria, Switzerland and Russia) are in the northern hemisphere, with colder climates and mountainous terrain.</p>
+<div id="9bcd5401-db10-4f8c-8c70-c5715fca345a" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>medals_with_region <span class="op">=</span> country_totals.merge(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    region_lookup,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"noc"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"iso_a3"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>world_medals <span class="op">=</span> world.merge(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    country_totals,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span><span class="st">"iso_a3"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span><span class="st">"noc"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>world_medals[<span class="st">"medals_total"</span>] <span class="op">=</span> world_medals[<span class="st">"medals_total"</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> world_medals.plot(column<span class="op">=</span><span class="st">"medals_total"</span>, legend<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">8</span>))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Winter Olympic Medals by Country (All Time)"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">"off"</span>)</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>plt.plot(</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    aus_by_year[<span class="st">"year"</span>],</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    aus_by_year[<span class="st">"medals"</span>],</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">"o"</span>,</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    linewidth<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Australia's Winter Olympic Medal Count Over Time"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Number of Medals"</span>)</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>plt.grid(alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="DOW3_olympics_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="DOW3_olympics_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="3945a83e-e036-4132-9a8b-ded1d89876d5" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diversification_metrics(df):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> df[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    shares <span class="op">=</span> df[<span class="st">"medals"</span>] <span class="op">/</span> total</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.Series({</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"medals_total"</span>: total,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"n_disciplines"</span>: df[<span class="st">"discipline"</span>].nunique(),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"top_share"</span>: shares.<span class="bu">max</span>(),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"hhi"</span>: (shares <span class="op">**</span> <span class="dv">2</span>).<span class="bu">sum</span>(),   <span class="co"># Herfindahl-Hirschman Index</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> (</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    country_discipline.groupby(<span class="st">"noc"</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(diversification_metrics)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>div_metrics.sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<p>The world map reinforces this pattern visually. Medals are heavily concentrated in North America and Northern Europe, with the United States, Canada, Norway and Russia clearly standing out. Much of Africa, South America, Southeast Asia and Oceania show little to no historical medal presence.</p>
+<p>Rather than being evenly distributed across the globe, Winter Olympic success is geographically clustered, with the strongest performers are located in high-latitude regions, where cold climates and mountainous terrain make winter sports both culturally embedded and relatively easier to access.</p>
+<p>This geographic clustering suggests that environmental factors may shape not only participation but also the breadth of opportunity across disciplines. Countries with extensive winter infrastructure and long-standing sporting traditions may be better positioned to compete across multiple events, potentially enabling diversification which we will delve deeper into. In contrast to this, nations without natural winter conditions may need to specialise strategically in a smaller set of disciplines.</p>
+<p>Whilst the global pattern suggests that geography plays a significant role in success, we will now explore Australia’s steadily increasing success over the past few years, despite its climatic differences.</p>
+</section>
+<section id="is-australias-rise-in-the-winter-olympics-really-attributed-to-specialisation" class="level3">
+<h3 class="anchored" data-anchor-id="is-australias-rise-in-the-winter-olympics-really-attributed-to-specialisation">Is Australia’s rise in the Winter Olympics really attributed to specialisation?</h3>
+<p>The Guardian attributes Australia’s recent success to “clever strategy and targeted resource allocation.” This implies that Australia does not compete broadly across the Winter Olympic programs, but instead concentrates its efforts in a narrow set of events.</p>
+<p>To test this, we will examine not just medal counts, but how those medals are distributed across events.</p>
+<div id="de5e3ab1-b815-47f6-b0c0-7f0a3bf80e08" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>country_event <span class="op">=</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    medals_df.groupby([<span class="st">"noc"</span>, <span class="st">"event"</span>])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"medals"</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> (</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    country_event.groupby(<span class="st">"noc"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        medals_total<span class="op">=</span>(<span class="st">"medals"</span>, <span class="st">"sum"</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        n_events<span class="op">=</span>(<span class="st">"event"</span>, <span class="st">"nunique"</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        top_share<span class="op">=</span>(<span class="st">"medals"</span>, <span class="kw">lambda</span> x: x.<span class="bu">max</span>() <span class="op">/</span> x.<span class="bu">sum</span>())</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>div_metrics.sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
@@ -353,91 +330,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">noc</th>
 <th data-quarto-table-cell-role="th">medals_total</th>
-<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">n_events</th>
 <th data-quarto-table-cell-role="th">top_share</th>
-<th data-quarto-table-cell-role="th">hhi</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">5</th>
 <td>CAN</td>
-<td>767.0</td>
-<td>14.0</td>
-<td>0.534550</td>
-<td>0.317356</td>
+<td>767</td>
+<td>63</td>
+<td>0.342894</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">42</th>
 <td>USA</td>
-<td>739.0</td>
-<td>13.0</td>
-<td>0.404601</td>
-<td>0.212387</td>
+<td>739</td>
+<td>63</td>
+<td>0.219215</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">28</th>
 <td>NOR</td>
-<td>579.0</td>
-<td>10.0</td>
-<td>0.381693</td>
-<td>0.217709</td>
+<td>579</td>
+<td>68</td>
+<td>0.103627</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">18</th>
 <td>GER</td>
-<td>520.0</td>
-<td>13.0</td>
-<td>0.182692</td>
-<td>0.117382</td>
+<td>520</td>
+<td>67</td>
+<td>0.069231</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">13</th>
 <td>FIN</td>
-<td>504.0</td>
-<td>12.0</td>
-<td>0.476190</td>
-<td>0.331641</td>
+<td>504</td>
+<td>43</td>
+<td>0.315476</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">38</th>
 <td>SWE</td>
-<td>478.0</td>
-<td>11.0</td>
-<td>0.451883</td>
-<td>0.300660</td>
+<td>478</td>
+<td>52</td>
+<td>0.368201</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">41</th>
 <td>URS</td>
-<td>440.0</td>
-<td>10.0</td>
+<td>440</td>
+<td>32</td>
 <td>0.381818</td>
-<td>0.245733</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
 <td>AUT</td>
-<td>336.0</td>
-<td>12.0</td>
-<td>0.410714</td>
-<td>0.224649</td>
+<td>336</td>
+<td>46</td>
+<td>0.083333</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">36</th>
 <td>SUI</td>
-<td>313.0</td>
-<td>13.0</td>
-<td>0.293930</td>
-<td>0.189580</td>
+<td>313</td>
+<td>44</td>
+<td>0.178914</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">34</th>
 <td>RUS</td>
-<td>246.0</td>
-<td>13.0</td>
-<td>0.207317</td>
-<td>0.162602</td>
+<td>246</td>
+<td>53</td>
+<td>0.174797</td>
 </tr>
 </tbody>
 </table>
@@ -445,13 +411,96 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="46a34327-40c7-43bf-9a6f-84299fa8a16e" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aus_disciplines <span class="op">=</span> (</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    country_discipline[country_discipline[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>]</span>
+<p>The above table shows the country, the total number of medals they obtained, the number of different events they participated in, and the proportion of medals which were won in each country’s strongest event.</p>
+<p>From this, we can actually see that Canada and the United States attribute a significant portion of their success to a single event. Around 34% of Canada’s medals come from its strongest event, while the United States concentrates about 22% in one area. Sweden and the former Soviet Union show even higher concentration levels, with roughly 37% and 38% of their medals tied to a single event.</p>
+<p>By contrast, countries such as Germany and Norway distribute their success far more evenly. Germany’s top event accounts for just 7% of its medals, and Norway’s for about 10%, despite both nations medalling across nearly 70 different events. Austria follows a similar pattern, with only 8% concentration in its strongest event. These countries are not defined by a dominant niche but by sustained competitiveness across the programme.</p>
+<p>We can see that there is a lot of geographic clustering. Canada and the United States are part of North America, while the remaining dominant nations are almost entirely European. Many of these countries, such as Austria and Switzerland, are highly mountainous, while others like Norway, Finland and Sweden benefit from long, harsh winters and strong winter sport traditions.</p>
+<div id="690873dc-2406-4567-ac32-12e891dd3163" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aus_events <span class="op">=</span> (</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    country_event[country_event[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"medals"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>aus_disciplines</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>aus_events.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">noc</th>
+<th data-quarto-table-cell-role="th">event</th>
+<th data-quarto-table-cell-role="th">medals</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1</th>
+<td>AUS</td>
+<td>5,000 metres Relay, Men (Olympic)</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>AUS</td>
+<td>Aerials, Women (Olympic)</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">7</th>
+<td>AUS</td>
+<td>Moguls, Men (Olympic)</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>AUS</td>
+<td>Halfpipe, Men (Olympic)</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>AUS</td>
+<td>Halfpipe, Women (Olympic)</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="364ec2c9-95ec-4d7f-af8f-b4995705d5be" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>top2_share_aus <span class="op">=</span> aus_events[<span class="st">"medals"</span>].head(<span class="dv">2</span>).<span class="bu">sum</span>() <span class="op">/</span> aus_events[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>top2_share_aus</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>np.float64(0.36363636363636365)</code></pre>
+</div>
+</div>
+<div id="f89f78f6-a92b-4865-84cf-10cf4b8f83f4" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pop_long <span class="op">=</span> pop_df.melt(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    id_vars<span class="op">=</span>[<span class="st">"Country Name"</span>, <span class="st">"Country Code"</span>],</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    var_name<span class="op">=</span><span class="st">"year"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    value_name<span class="op">=</span><span class="st">"population"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>pop_long[<span class="st">"year"</span>] <span class="op">=</span> pop_long[<span class="st">"year"</span>].astype(<span class="bu">int</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>pop_long <span class="op">=</span> pop_long.rename(columns<span class="op">=</span>{<span class="st">"Country Code"</span>: <span class="st">"noc"</span>})</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>medals_with_pop <span class="op">=</span> medals_df.merge(pop_long[[<span class="st">"noc"</span>, <span class="st">"year"</span>, <span class="st">"population"</span>]],</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                                  on<span class="op">=</span>[<span class="st">"noc"</span>, <span class="st">"year"</span>],</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                                  how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>country_pop <span class="op">=</span> (</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    medals_with_pop.groupby(<span class="st">"noc"</span>)[<span class="st">"population"</span>]</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    .median()</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"population_median"</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.merge(country_pop, on<span class="op">=</span><span class="st">"noc"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>div_metrics.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
@@ -461,120 +510,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">noc</th>
-<th data-quarto-table-cell-role="th">discipline</th>
-<th data-quarto-table-cell-role="th">medals</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">1</th>
-<td>AUS</td>
-<td>Freestyle Skiing (Skiing)</td>
-<td>9</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">4</th>
-<td>AUS</td>
-<td>Snowboarding (Skiing)</td>
-<td>6</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>AUS</td>
-<td>Short Track Speed Skating (Skating)</td>
-<td>5</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">0</th>
-<td>AUS</td>
-<td>Alpine Skiing (Skiing)</td>
-<td>1</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">3</th>
-<td>AUS</td>
-<td>Skeleton (Bobsleigh)</td>
-<td>1</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="fe2f3d3f-987e-42c5-a29e-55c505b2ed14" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> top_k_share(df, k<span class="op">=</span><span class="dv">2</span>):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> df[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    topk <span class="op">=</span> df.sort_values(<span class="st">"medals"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(k)[<span class="st">"medals"</span>].<span class="bu">sum</span>()</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> topk <span class="op">/</span> total <span class="cf">if</span> total <span class="cf">else</span> np.nan</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>top2 <span class="op">=</span> (</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    country_discipline.groupby(<span class="st">"noc"</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> x: top_k_share(x, k<span class="op">=</span><span class="dv">2</span>))</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"top2_share"</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Australia</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>top2[top2[<span class="st">"noc"</span>] <span class="op">==</span> <span class="st">"AUS"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">noc</th>
-<th data-quarto-table-cell-role="th">top2_share</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>AUS</td>
-<td>0.681818</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="f89f78f6-a92b-4865-84cf-10cf4b8f83f4" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pop_long <span class="op">=</span> pop_df.melt(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    id_vars<span class="op">=</span>[<span class="st">"Country Name"</span>, <span class="st">"Country Code"</span>],</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    var_name<span class="op">=</span><span class="st">"year"</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    value_name<span class="op">=</span><span class="st">"population"</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>pop_long[<span class="st">"year"</span>] <span class="op">=</span> pop_long[<span class="st">"year"</span>].astype(<span class="bu">int</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>pop_long <span class="op">=</span> pop_long.rename(columns<span class="op">=</span>{<span class="st">"Country Code"</span>: <span class="st">"noc"</span>})</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>medals_with_pop <span class="op">=</span> medals_df.merge(pop_long[[<span class="st">"noc"</span>, <span class="st">"year"</span>, <span class="st">"population"</span>]],</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                                  on<span class="op">=</span>[<span class="st">"noc"</span>, <span class="st">"year"</span>],</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                                  how<span class="op">=</span><span class="st">"left"</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>country_pop <span class="op">=</span> (</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    medals_with_pop.groupby(<span class="st">"noc"</span>)[<span class="st">"population"</span>]</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    .median()</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"population_median"</span>)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.merge(country_pop, on<span class="op">=</span><span class="st">"noc"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>div_metrics.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">noc</th>
 <th data-quarto-table-cell-role="th">medals_total</th>
-<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">n_events</th>
 <th data-quarto-table-cell-role="th">top_share</th>
-<th data-quarto-table-cell-role="th">hhi</th>
 <th data-quarto-table-cell-role="th">population_median</th>
 </tr>
 </thead>
@@ -582,46 +520,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
 <td>AUS</td>
-<td>22.0</td>
-<td>5.0</td>
-<td>0.409091</td>
-<td>0.297521</td>
+<td>22</td>
+<td>12</td>
+<td>0.181818</td>
 <td>22031750.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
 <td>AUT</td>
-<td>336.0</td>
-<td>12.0</td>
-<td>0.410714</td>
-<td>0.224649</td>
+<td>336</td>
+<td>46</td>
+<td>0.083333</td>
 <td>8081957.0</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
 <td>BEL</td>
-<td>16.0</td>
-<td>4.0</td>
-<td>0.562500</td>
-<td>0.390625</td>
+<td>16</td>
+<td>7</td>
+<td>0.312500</td>
 <td>11556434.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">3</th>
 <td>BLR</td>
-<td>23.0</td>
-<td>3.0</td>
-<td>0.608696</td>
-<td>0.493384</td>
+<td>23</td>
+<td>9</td>
+<td>0.217391</td>
 <td>9448515.0</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">4</th>
 <td>BUL</td>
-<td>6.0</td>
-<td>3.0</td>
-<td>0.500000</td>
-<td>0.388889</td>
+<td>6</td>
+<td>5</td>
+<td>0.333333</td>
 <td>NaN</td>
 </tr>
 </tbody>
@@ -630,23 +563,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="f05795b5-6393-469b-a215-d5d8bb9d8c76" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.dropna(subset<span class="op">=</span>[<span class="st">"population_median"</span>]).copy()</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>div_metrics[<span class="st">"size_bucket"</span>] <span class="op">=</span> pd.qcut(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    div_metrics[<span class="st">"population_median"</span>],</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    q<span class="op">=</span><span class="dv">3</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>[<span class="st">"small"</span>, <span class="st">"medium"</span>, <span class="st">"large"</span>]</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>summary_by_size <span class="op">=</span> (</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    div_metrics.groupby(<span class="st">"size_bucket"</span>)[[<span class="st">"medals_total"</span>, <span class="st">"n_disciplines"</span>, <span class="st">"top_share"</span>, <span class="st">"hhi"</span>]]</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    .median()</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>summary_by_size</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div id="f05795b5-6393-469b-a215-d5d8bb9d8c76" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.dropna(subset<span class="op">=</span>[<span class="st">"population_median"</span>]).copy()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>div_metrics[<span class="st">"size_bucket"</span>] <span class="op">=</span> pd.qcut(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    div_metrics[<span class="st">"population_median"</span>],</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    q<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>[<span class="st">"small"</span>, <span class="st">"medium"</span>, <span class="st">"large"</span>]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>summary_by_size <span class="op">=</span> (</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    div_metrics.groupby(<span class="st">"size_bucket"</span>)[[<span class="st">"medals_total"</span>, <span class="st">"n_events"</span>, <span class="st">"top_share"</span>]]</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    .median()</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>summary_by_size</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
 
@@ -656,9 +589,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">size_bucket</th>
 <th data-quarto-table-cell-role="th">medals_total</th>
-<th data-quarto-table-cell-role="th">n_disciplines</th>
+<th data-quarto-table-cell-role="th">n_events</th>
 <th data-quarto-table-cell-role="th">top_share</th>
-<th data-quarto-table-cell-role="th">hhi</th>
 </tr>
 </thead>
 <tbody>
@@ -666,25 +598,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th data-quarto-table-cell-role="th">0</th>
 <td>small</td>
 <td>27.5</td>
-<td>3.5</td>
-<td>0.554348</td>
-<td>0.441136</td>
+<td>8.5</td>
+<td>0.324405</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">1</th>
 <td>medium</td>
 <td>19.0</td>
-<td>4.5</td>
-<td>0.522497</td>
-<td>0.362897</td>
+<td>7.0</td>
+<td>0.388839</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2</th>
 <td>large</td>
 <td>126.0</td>
-<td>8.5</td>
-<td>0.358291</td>
-<td>0.211294</td>
+<td>24.5</td>
+<td>0.187398</td>
 </tr>
 </tbody>
 </table>
@@ -692,84 +621,146 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="e325fbac-f071-43f6-85ac-7a737d429d36" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>country_meta <span class="op">=</span> world[[<span class="st">"iso_a3"</span>, <span class="st">"continent"</span>]].copy()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>country_meta <span class="op">=</span> country_meta.rename(columns<span class="op">=</span>{<span class="st">"iso_a3"</span>: <span class="st">"noc"</span>})</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.merge(country_meta, on<span class="op">=</span><span class="st">"noc"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>div_metrics.groupby(<span class="st">"continent"</span>)[[<span class="st">"n_disciplines"</span>, <span class="st">"top_share"</span>, <span class="st">"hhi"</span>, <span class="st">"medals_total"</span>]].median().sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<div>
+<div id="407de745-f653-485b-8bce-5cb6b44cbeb2" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>div_metrics.columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>Index(['noc', 'medals_total', 'n_events', 'top_share', 'population_median',
+       'size_bucket'],
+      dtype='str')</code></pre>
+</div>
+</div>
+<div id="e325fbac-f071-43f6-85ac-7a737d429d36" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>country_meta <span class="op">=</span> world[[<span class="st">"iso_a3"</span>, <span class="st">"continent"</span>]].copy()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>country_meta <span class="op">=</span> country_meta.rename(columns<span class="op">=</span>{<span class="st">"iso_a3"</span>: <span class="st">"noc"</span>})</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>div_metrics <span class="op">=</span> div_metrics.merge(country_meta, on<span class="op">=</span><span class="st">"noc"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>div_metrics.groupby(<span class="st">"continent"</span>)[[<span class="st">"n_events"</span>, <span class="st">"top_share"</span>, <span class="st">"medals_total"</span>]].median().sort_values(<span class="st">"medals_total"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[12]</span><span class="ansi-green-fg">, line 6</span>
+<span class="ansi-green-fg">      2</span> country_meta = country_meta.rename(columns={<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">iso_a3</span><span class="ansi-yellow-fg">"</span>: <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">noc</span><span class="ansi-yellow-fg">"</span>})
+<span class="ansi-green-fg">      4</span> div_metrics = div_metrics.merge(country_meta, on=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">noc</span><span class="ansi-yellow-fg">"</span>, how=<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">left</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">6</span> <span class="ansi-yellow-bg">div_metrics</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">groupby</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">continent</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">)</span>[[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">n_events</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">top_share</span><span class="ansi-yellow-fg">"</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">medals_total</span><span class="ansi-yellow-fg">"</span>]].median().sort_values(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">medals_total</span><span class="ansi-yellow-fg">"</span>, ascending=<span style="font-weight:bold;color:rgb(0,135,0)">False</span>)
 
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/util/_decorators.py:336</span>, in <span class="ansi-cyan-fg">deprecate_nonkeyword_arguments.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    330</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">len</span>(args) &gt; num_allow_args:
+<span class="ansi-green-fg">    331</span>     warnings.warn(
+<span class="ansi-green-fg">    332</span>         msg.format(arguments=_format_argument_list(allow_args)),
+<span class="ansi-green-fg">    333</span>         klass,
+<span class="ansi-green-fg">    334</span>         stacklevel=find_stack_level(),
+<span class="ansi-green-fg">    335</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">336</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">func</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
 
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">n_disciplines</th>
-<th data-quarto-table-cell-role="th">top_share</th>
-<th data-quarto-table-cell-role="th">hhi</th>
-<th data-quarto-table-cell-role="th">medals_total</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">continent</th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">North America</th>
-<td>13.5</td>
-<td>0.469576</td>
-<td>0.264871</td>
-<td>753.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Asia</th>
-<td>6.0</td>
-<td>0.533333</td>
-<td>0.435694</td>
-<td>62.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Europe</th>
-<td>4.0</td>
-<td>0.521739</td>
-<td>0.360000</td>
-<td>32.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Oceania</th>
-<td>4.0</td>
-<td>0.454545</td>
-<td>0.343205</td>
-<td>14.0</td>
-</tr>
-</tbody>
-</table>
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/core/frame.py:9692</span>, in <span class="ansi-cyan-fg">DataFrame.groupby</span><span class="ansi-blue-fg">(self, by, level, as_index, sort, group_keys, observed, dropna)</span>
+<span class="ansi-green-fg">   9689</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> level <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span> <span style="font-weight:bold;color:rgb(175,0,255)">and</span> by <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">   9690</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">TypeError</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">You have to supply one of </span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">by</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg"> and </span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">level</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">9692</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">DataFrameGroupBy</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   9693</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9694</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">keys</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">by</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9695</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9696</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">as_index</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">as_index</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9697</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9698</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">group_keys</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">group_keys</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9699</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9700</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9701</span> <span class="ansi-yellow-bg">)</span>
 
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/core/groupby/groupby.py:1070</span>, in <span class="ansi-cyan-fg">GroupBy.__init__</span><span class="ansi-blue-fg">(self, obj, keys, level, grouper, exclusions, selection, as_index, sort, group_keys, observed, dropna)</span>
+<span class="ansi-green-fg">   1067</span> <span style="color:rgb(0,135,0)">self</span>.dropna = dropna
+<span class="ansi-green-fg">   1069</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> grouper <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1070</span>     grouper, exclusions, obj = <span class="ansi-yellow-bg">get_grouper</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1071</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1072</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">keys</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1073</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1074</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1075</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1076</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1077</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1079</span> <span style="color:rgb(0,135,0)">self</span>.observed = observed
+<span class="ansi-green-fg">   1080</span> <span style="color:rgb(0,135,0)">self</span>.obj = obj
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/core/groupby/grouper.py:898</span>, in <span class="ansi-cyan-fg">get_grouper</span><span class="ansi-blue-fg">(obj, key, level, sort, observed, validate, dropna)</span>
+<span class="ansi-green-fg">    896</span>         in_axis, level, gpr = <span style="font-weight:bold;color:rgb(0,135,0)">False</span>, gpr, <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    897</span>     <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">898</span>         <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">KeyError</span>(gpr)
+<span class="ansi-green-fg">    899</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> <span style="color:rgb(0,135,0)">isinstance</span>(gpr, Grouper) <span style="font-weight:bold;color:rgb(175,0,255)">and</span> gpr.key <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">    900</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Add key to exclusions</span>
+<span class="ansi-green-fg">    901</span>     exclusions.add(gpr.key)
+
+<span class="ansi-red-fg">KeyError</span>: 'continent'</pre>
 </div>
 </div>
 </div>
-<div id="7dd19bbe-04e6-4bba-bf8c-d1de1d1e4828" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>continent_totals <span class="op">=</span> (</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    div_metrics.groupby(<span class="st">"continent"</span>)[<span class="st">"medals_total"</span>]</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">sum</span>()</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    .sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>continent_totals</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
-<pre><code>continent
-Europe           2126.0
-North America    1506.0
-Asia              379.0
-Oceania            28.0
-Name: medals_total, dtype: float64</code></pre>
+<div id="7dd19bbe-04e6-4bba-bf8c-d1de1d1e4828" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>continent_totals <span class="op">=</span> (</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    div_metrics.groupby(<span class="st">"continent"</span>)[<span class="st">"medals_total"</span>]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">sum</span>()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    .sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>continent_totals</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyError</span>                                  Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> continent_totals = (
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span>     <span class="ansi-yellow-bg">div_metrics</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">groupby</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-fg ansi-yellow-bg">continent</span><span class="ansi-yellow-fg ansi-yellow-bg">"</span><span class="ansi-yellow-bg">)</span>[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">medals_total</span><span class="ansi-yellow-fg">"</span>]
+<span class="ansi-green-fg">      3</span>     .sum()
+<span class="ansi-green-fg">      4</span>     .sort_values(ascending=<span style="font-weight:bold;color:rgb(0,135,0)">False</span>)
+<span class="ansi-green-fg">      5</span> )
+<span class="ansi-green-fg">      7</span> continent_totals
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/util/_decorators.py:336</span>, in <span class="ansi-cyan-fg">deprecate_nonkeyword_arguments.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    330</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">len</span>(args) &gt; num_allow_args:
+<span class="ansi-green-fg">    331</span>     warnings.warn(
+<span class="ansi-green-fg">    332</span>         msg.format(arguments=_format_argument_list(allow_args)),
+<span class="ansi-green-fg">    333</span>         klass,
+<span class="ansi-green-fg">    334</span>         stacklevel=find_stack_level(),
+<span class="ansi-green-fg">    335</span>     )
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">336</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">func</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">args</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">*</span><span class="ansi-yellow-bg">kwargs</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/core/frame.py:9692</span>, in <span class="ansi-cyan-fg">DataFrame.groupby</span><span class="ansi-blue-fg">(self, by, level, as_index, sort, group_keys, observed, dropna)</span>
+<span class="ansi-green-fg">   9689</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> level <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span> <span style="font-weight:bold;color:rgb(175,0,255)">and</span> by <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">   9690</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">TypeError</span>(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">You have to supply one of </span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">by</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg"> and </span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">level</span><span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">"</span>)
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">9692</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-yellow-bg">DataFrameGroupBy</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   9693</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9694</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">keys</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">by</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9695</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9696</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">as_index</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">as_index</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9697</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9698</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">group_keys</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">group_keys</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9699</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9700</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   9701</span> <span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/core/groupby/groupby.py:1070</span>, in <span class="ansi-cyan-fg">GroupBy.__init__</span><span class="ansi-blue-fg">(self, obj, keys, level, grouper, exclusions, selection, as_index, sort, group_keys, observed, dropna)</span>
+<span class="ansi-green-fg">   1067</span> <span style="color:rgb(0,135,0)">self</span>.dropna = dropna
+<span class="ansi-green-fg">   1069</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> grouper <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1070</span>     grouper, exclusions, obj = <span class="ansi-yellow-bg">get_grouper</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   1071</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">obj</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1072</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">keys</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1073</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">level</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1074</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">sort</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1075</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">=</span><span class="ansi-yellow-bg">observed</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1076</span> <span class="ansi-yellow-bg">        </span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">=</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">dropna</span><span class="ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   1077</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1079</span> <span style="color:rgb(0,135,0)">self</span>.observed = observed
+<span class="ansi-green-fg">   1080</span> <span style="color:rgb(0,135,0)">self</span>.obj = obj
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/jupyterhub/share/jupyter/venv/python3_comm3180/lib/python3.12/site-packages/pandas/core/groupby/grouper.py:898</span>, in <span class="ansi-cyan-fg">get_grouper</span><span class="ansi-blue-fg">(obj, key, level, sort, observed, validate, dropna)</span>
+<span class="ansi-green-fg">    896</span>         in_axis, level, gpr = <span style="font-weight:bold;color:rgb(0,135,0)">False</span>, gpr, <span style="font-weight:bold;color:rgb(0,135,0)">None</span>
+<span class="ansi-green-fg">    897</span>     <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">898</span>         <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">KeyError</span>(gpr)
+<span class="ansi-green-fg">    899</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> <span style="color:rgb(0,135,0)">isinstance</span>(gpr, Grouper) <span style="font-weight:bold;color:rgb(175,0,255)">and</span> gpr.key <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">    900</span>     <span style="font-style:italic;color:rgb(95,135,135)"># Add key to exclusions</span>
+<span class="ansi-green-fg">    901</span>     exclusions.add(gpr.key)
+
+<span class="ansi-red-fg">KeyError</span>: 'continent'</pre>
+</div>
 </div>
 </div>
 
