@@ -2,22 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://dpark2380.github.io/comm3180_S26_Blog/about.html</loc>
-    <lastmod>2026-02-22T16:38:01.641Z</lastmod>
+    <lastmod>2026-02-25T15:57:08.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dpark2380.github.io/comm3180_S26_Blog/posts/blog_04_crash/01_Exploring_PDOT_Crash_Data.html</loc>
+    <lastmod>2026-02-25T15:57:08.254Z</lastmod>
   </url>
   <url>
     <loc>https://dpark2380.github.io/comm3180_S26_Blog/posts/blog_03_olympics/DOW3_olympics.html</loc>
-    <lastmod>2026-02-22T16:38:01.697Z</lastmod>
+    <lastmod>2026-02-25T15:57:08.105Z</lastmod>
   </url>
   <url>
     <loc>https://dpark2380.github.io/comm3180_S26_Blog/index.html</loc>
-    <lastmod>2026-02-22T16:38:01.641Z</lastmod>
+    <lastmod>2026-02-25T15:57:08.049Z</lastmod>
   </url>
   <url>
     <loc>https://dpark2380.github.io/comm3180_S26_Blog/posts/blog_01_weather/DOW1_weather.html</loc>
-    <lastmod>2026-02-22T16:38:01.644Z</lastmod>
+    <lastmod>2026-02-25T15:57:08.051Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dpark2380.github.io/comm3180_S26_Blog/posts/blog_04_crash/02_Working_with_geopandas_part1.html</loc>
+    <lastmod>2026-02-25T15:57:08.254Z</lastmod>
   </url>
   <url>
     <loc>https://dpark2380.github.io/comm3180_S26_Blog/posts/blog_02_personality/DOW2_personality.html</loc>
-    <lastmod>2026-02-22T16:38:01.646Z</lastmod>
+    <lastmod>2026-02-25T15:57:08.054Z</lastmod>
   </url>
 </urlset>
