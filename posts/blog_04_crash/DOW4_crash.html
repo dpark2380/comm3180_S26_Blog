@@ -8,7 +8,7 @@
 
 <meta name="author" content="Daniel Park">
 <meta name="dcterms.date" content="2026-02-25">
-<meta name="description" content="placeholder">
+<meta name="description" content="Using PennDOT crash data from 2005–2024, this analysis explores patterns in traffic crashes across Philadelphia and examines why roads like Roosevelt Boulevard and Broad Street are often considered among the city’s most dangerous, exploring whether measures such as speed cameras can help reduce fatal crashes and improve road safety.">
 
 <title>Blog 04: Analysis of Pennsylvania Crash Data – Daniel’s Data Stories</title>
 <style>
@@ -154,7 +154,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <h1 class="title">Blog 04: Analysis of Pennsylvania Crash Data</h1>
                   <div>
         <div class="description">
-          placeholder
+          Using PennDOT crash data from 2005–2024, this analysis explores patterns in traffic crashes across Philadelphia and examines why roads like Roosevelt Boulevard and Broad Street are often considered among the city’s most dangerous, exploring whether measures such as speed cameras can help reduce fatal crashes and improve road safety.
         </div>
       </div>
                           <div class="quarto-categories">
@@ -229,21 +229,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>phil_crashes <span class="op">=</span> crash_data[phil_filter].copy()</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># remove rows without decimal coordinates</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>phil_crashes <span class="op">=</span> phil_crashes.dropna(subset<span class="op">=</span>[<span class="st">'DEC_LATITUDE'</span>,<span class="st">'DEC_LONGITUDE'</span>])</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>phil_crashes.shape</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>geom <span class="op">=</span> gpd.points_from_xy(phil_crashes[<span class="st">'DEC_LONGITUDE'</span>], phil_crashes[<span class="st">'DEC_LATITUDE'</span>])</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>phil_crashes_gdf <span class="op">=</span> gpd.GeoDataFrame(phil_crashes, geometry<span class="op">=</span>geom).set_crs(<span class="st">'EPSG:4326'</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>philly_zip <span class="op">=</span> gpd.read_file(<span class="st">"data/philadelphia_zip_boundaries.geojson"</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> philly_zip.plot(color<span class="op">=</span><span class="st">'white'</span>, edgecolor<span class="op">=</span><span class="st">'lightgray'</span>, figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>phil_crashes_gdf.sample(<span class="dv">8000</span>).plot(ax<span class="op">=</span>base, markersize<span class="op">=</span><span class="dv">1</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>base.axis(<span class="st">'off'</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Sample of 8,000 crash locations in Philadelphia, 2005–2024"</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>phil_crashes <span class="op">=</span> phil_crashes.dropna(subset<span class="op">=</span>[<span class="st">'DEC_LATITUDE'</span>,<span class="st">'DEC_LONGITUDE'</span>])</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>phil_crashes.shape</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>geom <span class="op">=</span> gpd.points_from_xy(phil_crashes[<span class="st">'DEC_LONGITUDE'</span>], phil_crashes[<span class="st">'DEC_LATITUDE'</span>])</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>phil_crashes_gdf <span class="op">=</span> gpd.GeoDataFrame(phil_crashes, geometry<span class="op">=</span>geom).set_crs(<span class="st">'EPSG:4326'</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>philly_zip <span class="op">=</span> gpd.read_file(<span class="st">"data/philadelphia_zip_boundaries.geojson"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> philly_zip.plot(color<span class="op">=</span><span class="st">'white'</span>, edgecolor<span class="op">=</span><span class="st">'lightgray'</span>, figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">7</span>))</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>phil_crashes_gdf.sample(<span class="dv">8000</span>).plot(ax<span class="op">=</span>base, markersize<span class="op">=</span><span class="dv">1</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>base.axis(<span class="st">'off'</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Sample of 8,000 crash locations in Philadelphia, 2005–2024"</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -297,18 +296,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="how-are-crashes-and-fatalities-distributed-over-time-in-philadelphia" class="level2">
 <h2 class="anchored" data-anchor-id="how-are-crashes-and-fatalities-distributed-over-time-in-philadelphia">How are crashes and fatalities distributed over time in Philadelphia?</h2>
 <p>We have observed where crashes are most likely to occur, and now we will aim to look at how the number of crashes changes over the period of the whole day, and see if they are correlated in any way to the distribution of fatalities.</p>
-<div id="cell-10" class="cell" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.plot(hour.index, hour[<span class="st">'crashes'</span>], marker<span class="op">=</span><span class="st">'o'</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Number of crashes by hour (Philadelphia, 2005–2024)"</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Hour of day"</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Crashes"</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>plt.xticks(<span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">24</span>))</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-10" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> phil_crashes.copy()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[df[<span class="st">"HOUR_OF_DAY"</span>].between(<span class="dv">0</span>, <span class="dv">23</span>)]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>hour <span class="op">=</span> (</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">"HOUR_OF_DAY"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      .agg(crashes<span class="op">=</span>(<span class="st">"CRN"</span>,<span class="st">"count"</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>           fatalities<span class="op">=</span>(<span class="st">"FATAL_COUNT"</span>,<span class="st">"sum"</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>           injuries<span class="op">=</span>(<span class="st">"TOT_INJ_COUNT"</span>,<span class="st">"sum"</span>))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>plt.plot(hour.index, hour[<span class="st">'crashes'</span>], marker<span class="op">=</span><span class="st">'o'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Number of crashes by hour (Philadelphia, 2005–2024)"</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Hour of day"</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Crashes"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.xticks(<span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">24</span>))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -319,7 +328,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The hourly patterns reveal an important distinction between the frequency of crashes and their severity. The total number of crashes rises sharply during the daytime and peaks in the late afternoon, around the evening commuting period between roughly 3 PM and 6 PM. These hours correspond to the highest traffic volumes as people travel to and from work, increasing the number of potential interactions between vehicles.</p>
 <p>However, we can see that during the night and early morning, the number of crashes per hour is relatively stable, mostly ranging from 200-300 over the whole 20 year period, with very little crashes having happened around 4 to 5 am in the morning. This reflects the much lower traffic volumes during these hours, when far fewer vehicles are on the road compared with the daytime commuting periods, even though the crashes that do occur may be more severe, which we will observe now.</p>
-<div id="cell-12" class="cell" data-execution_count="32">
+<div id="cell-12" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fatalities by hour</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.plot(hour.index, hour[<span class="st">'fatalities'</span>], marker<span class="op">=</span><span class="st">'o'</span>)</span>
@@ -347,11 +356,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="roosevelt-boulevard-philadelphias-most-dangerous-road" class="level2">
 <h2 class="anchored" data-anchor-id="roosevelt-boulevard-philadelphias-most-dangerous-road">Roosevelt Boulevard: Philadelphia’s most dangerous road</h2>
 <p>Now we will take a deeper dive into what was considered Philadelphia’s most dangerous road, testing the claims made by The Philadelphia Tribune which stated that “between 2011 and 2015, 13 percent of the city’s traffic fatalities” have happened on the boulevard, with “pedestrians ma(king) up one-third of those killed on the 12-lane road.”</p>
-<div id="cell-15" class="cell" data-execution_count="33">
+<div id="cell-15" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>BUFFER_FT <span class="op">=</span> <span class="dv">100</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>CRS_FEET <span class="op">=</span> <span class="dv">2272</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Find Roosevelt BLVD segments + Roosevelt ramps</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Finding Roosevelt BLVD segments + Roosevelt ramps</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>rb_main <span class="op">=</span> streets[</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    (streets[<span class="st">"st_name"</span>].fillna(<span class="st">""</span>).<span class="bu">str</span>.upper().<span class="bu">str</span>.strip() <span class="op">==</span> <span class="st">"ROOSEVELT"</span>) <span class="op">&amp;</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    (streets[<span class="st">"st_type"</span>].fillna(<span class="st">""</span>).<span class="bu">str</span>.upper().<span class="bu">str</span>.strip() <span class="op">==</span> <span class="st">"BLVD"</span>)</span>
@@ -364,40 +373,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> pd.concat([rb_main, rb_ramps], ignore_index<span class="op">=</span><span class="va">True</span>).to_crs(epsg<span class="op">=</span>CRS_FEET)</span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Buffer into a corridor polygon</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Buffering into a corridor polygon</span></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>rb_buf <span class="op">=</span> gpd.GeoDataFrame(geometry<span class="op">=</span>rb.<span class="bu">buffer</span>(BUFFER_FT), crs<span class="op">=</span>rb.crs)</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Crashes (2011–2015) projected to feet CRS</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Crashes (2011–2015) projected to feet</span></span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>city_11_15 <span class="op">=</span> phil_crashes_gdf.query(<span class="st">"2011 &lt;= CRASH_YEAR &lt;= 2015"</span>).to_crs(epsg<span class="op">=</span>CRS_FEET)</span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>city_fatalities <span class="op">=</span> city_11_15[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) Join crashes within corridor + dedupe</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>rb_joined_11_15 <span class="op">=</span> gpd.sjoin(city_11_15, rb_buf, predicate<span class="op">=</span><span class="st">"within"</span>).drop_duplicates(<span class="st">"CRN"</span>)</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Stats</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>rb_fatalities_11_15 <span class="op">=</span> rb_joined_11_15[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>rb_share_11_15 <span class="op">=</span> rb_fatalities_11_15 <span class="op">/</span> city_fatalities</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>rb_injuries_11_15 <span class="op">=</span> rb_joined_11_15[<span class="st">"TOT_INJ_COUNT"</span>].<span class="bu">sum</span>()</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>rb_ped_deaths_11_15 <span class="op">=</span> rb_joined_11_15[<span class="st">"PED_DEATH_COUNT"</span>].<span class="bu">sum</span>()</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>rb_ped_share_11_15 <span class="op">=</span> rb_ped_deaths_11_15 <span class="op">/</span> rb_fatalities_11_15</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>rb_summary <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Metric"</span>: [</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Total Number of Crashes"</span>, <span class="st">"Fatalities"</span>, <span class="st">"Share of city fatalities"</span>, <span class="st">"Injuries"</span>, <span class="st">"Pedestrian deaths"</span>, <span class="st">"Pedestrian share of deaths"</span></span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Value"</span>: [</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span>(rb_joined_11_15),</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(rb_fatalities_11_15),</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>rb_share_11_15<span class="sc">:.1%}</span><span class="ss">"</span>,</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(rb_injuries_11_15),</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(rb_ped_deaths_11_15),</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>rb_ped_share_11_15<span class="sc">:.1%}</span><span class="ss">"</span></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>rb_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="33">
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>rb_joined_11_15 <span class="op">=</span> gpd.sjoin(city_11_15, rb_buf, predicate<span class="op">=</span><span class="st">"within"</span>).drop_duplicates(<span class="st">"CRN"</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Stats</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>rb_fatalities_11_15 <span class="op">=</span> rb_joined_11_15[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>rb_share_11_15 <span class="op">=</span> rb_fatalities_11_15 <span class="op">/</span> city_fatalities</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>rb_injuries_11_15 <span class="op">=</span> rb_joined_11_15[<span class="st">"TOT_INJ_COUNT"</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>rb_ped_deaths_11_15 <span class="op">=</span> rb_joined_11_15[<span class="st">"PED_DEATH_COUNT"</span>].<span class="bu">sum</span>()</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>rb_ped_share_11_15 <span class="op">=</span> rb_ped_deaths_11_15 <span class="op">/</span> rb_fatalities_11_15</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>rb_summary <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Metric"</span>: [</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Total Number of Crashes"</span>, <span class="st">"Fatalities"</span>, <span class="st">"Share of city fatalities"</span>, <span class="st">"Injuries"</span>, <span class="st">"Pedestrian deaths"</span>, <span class="st">"Pedestrian share of deaths"</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Value"</span>: [</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span>(rb_joined_11_15),</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(rb_fatalities_11_15),</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>rb_share_11_15<span class="sc">:.1%}</span><span class="ss">"</span>,</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(rb_injuries_11_15),</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        <span class="bu">int</span>(rb_ped_deaths_11_15),</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>rb_ped_share_11_15<span class="sc">:.1%}</span><span class="ss">"</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>rb_summary</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
 
@@ -412,7 +420,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">0</th>
-<td>Crashes matched</td>
+<td>Total Number of Crashes</td>
 <td>3606</td>
 </tr>
 <tr class="even">
@@ -449,36 +457,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>From the above table, we can see that a total of 3606 crashes happened just between 2011 and 2015 on Roosevelt Boulevard. Out of these crashes, there were 65 fatalities. As a proportion of the total number of fatalities that have happened in Philadelphia during this time period, it is 13.8%, which accurately matches the claims made by the Philadelphia Tribune.</p>
 <p>We can additionally see that there were 4445 injuries, which is more than the number of crashes, meaning on average, there was more than one person involved in each of these crashes. A more shocking figure is the number of pedestrian deaths, with there being 22 fatalities over the four year period, and indeed, the pedestrian share of deaths along Roosevelt Boulevard is 33.8%, matching the claims made by the article once again.</p>
 <p>In response to these shocking figures, Philadelphia decided to implement their “Vision Zero” action plan, with the goal of “reduc(ing) Philadelphia traffic deaths to zero by 2030.” (Philadelphia Tribune). To achieve this, in June 2020, the government installed speed safety cameras along ten dangerous stretches of highway on Roosevelt Blvd, the effects of which we will see below.</p>
-<div id="cell-17" class="cell" data-execution_count="11">
+<div id="cell-17" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Roosevelt Blvd share of city fatalities over time</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Uses rb_buf built above</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corridor_fatal_share_by_year(all_crashes_feet, corridor_buf):</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    years <span class="op">=</span> <span class="bu">sorted</span>(all_crashes_feet[<span class="st">"CRASH_YEAR"</span>].dropna().unique())</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> y <span class="kw">in</span> years:</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        sub <span class="op">=</span> all_crashes_feet[all_crashes_feet[<span class="st">"CRASH_YEAR"</span>] <span class="op">==</span> y]</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        city_fatal <span class="op">=</span> sub[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        j <span class="op">=</span> gpd.sjoin(sub, corridor_buf, predicate<span class="op">=</span><span class="st">"within"</span>).drop_duplicates(<span class="st">"CRN"</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        corr_fatal <span class="op">=</span> j[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        share <span class="op">=</span> corr_fatal <span class="op">/</span> city_fatal <span class="cf">if</span> city_fatal <span class="cf">else</span> np.nan</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        rows.append([y, corr_fatal, city_fatal, share])</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(rows, columns<span class="op">=</span>[<span class="st">"year"</span>, <span class="st">"corr_fatal"</span>, <span class="st">"city_fatal"</span>, <span class="st">"share"</span>])</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corridor_fatal_share_by_year(all_crashes_feet, corridor_buf):</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    years <span class="op">=</span> <span class="bu">sorted</span>(all_crashes_feet[<span class="st">"CRASH_YEAR"</span>].dropna().unique())</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> y <span class="kw">in</span> years:</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        sub <span class="op">=</span> all_crashes_feet[all_crashes_feet[<span class="st">"CRASH_YEAR"</span>] <span class="op">==</span> y]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        city_fatal <span class="op">=</span> sub[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        j <span class="op">=</span> gpd.sjoin(sub, corridor_buf, predicate<span class="op">=</span><span class="st">"within"</span>).drop_duplicates(<span class="st">"CRN"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        corr_fatal <span class="op">=</span> j[<span class="st">"FATAL_COUNT"</span>].<span class="bu">sum</span>()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        share <span class="op">=</span> corr_fatal <span class="op">/</span> city_fatal <span class="cf">if</span> city_fatal <span class="cf">else</span> np.nan</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        rows.append([y, corr_fatal, city_fatal, share])</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(rows, columns<span class="op">=</span>[<span class="st">"year"</span>, <span class="st">"corr_fatal"</span>, <span class="st">"city_fatal"</span>, <span class="st">"share"</span>])</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>all_crashes <span class="op">=</span> phil_crashes_gdf.to_crs(epsg<span class="op">=</span>CRS_FEET)</span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>all_crashes <span class="op">=</span> phil_crashes_gdf.to_crs(epsg<span class="op">=</span>CRS_FEET)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>rb_year_df <span class="op">=</span> corridor_fatal_share_by_year(all_crashes, rb_buf)</span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>rb_year_df <span class="op">=</span> corridor_fatal_share_by_year(all_crashes, rb_buf)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>plt.plot(rb_year_df[<span class="st">"year"</span>], rb_year_df[<span class="st">"share"</span>], marker<span class="op">=</span><span class="st">"o"</span>)</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>plt.axvline(<span class="dv">2020</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"red"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)  <span class="co"># June 2020 cameras (year marker)</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Roosevelt Blvd Share of City Fatalities Over Time"</span>)</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Share of City Fatalities"</span>)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>plt.plot(rb_year_df[<span class="st">"year"</span>], rb_year_df[<span class="st">"share"</span>], marker<span class="op">=</span><span class="st">"o"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.axvline(<span class="dv">2020</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"red"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)  <span class="co"># June 2020 cameras (year marker)</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Roosevelt Blvd Share of City Fatalities Over Time"</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Share of City Fatalities"</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -492,7 +498,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Following the introduction of automated speed enforcement, we can see that the boulevard’s share of citywide fatalities declined significantly. While yearly values continued to fluctuate slightly, the proportion of fatalities occurring on Roosevelt Boulevard remains noticeably lower in the years after 2020 compared with many earlier years in the dataset, with a significant drop in recent years, with the share of city fatalities dropping well below 2.5%.</p>
 <p>Reports from the <a href="https://philapark.org/speed-cameras/">Philadelphia Parking Authority</a> support this pattern. According to the agency, speeding tickets on Roosevelt Boulevard have fallen by 93 percent since the cameras were installed, while fatal and serious injury crashes have decreased by 21 percent and pedestrian-involved crashes have dropped by 50 percent. The apparent reduction in the boulevard’s share of city fatalities after 2020 is therefore consistent with the improvements reported following the introduction of automated speed enforcement.</p>
 <p>The perceived success of the program led Pennsylvania legislators to make the camera pilot permanent and allow the city to expand automated speed enforcement to additional roadways. In 2023, the program was extended to several new roads, including sections of Route 611, which covers much of Broad Street, which we will explore next.</p>
-<div id="cell-19" class="cell" data-execution_count="37">
+<div id="cell-19" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Broad Street: corridor buffer stats (2011–2015)</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
@@ -534,41 +540,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># show as a clean table in notebooks</span></span>
 <span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>broad_summary.style.hide(axis<span class="op">=</span><span class="st">"index"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="37">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <style type="text/css">
 </style>
 
-<table id="T_50123" class="caption-top table table-sm table-striped small">
+<table id="T_5f0ce" class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th id="T_50123_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Metric</th>
-<th id="T_50123_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Broad Street (2011–2015)</th>
+<th id="T_5f0ce_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Metric</th>
+<th id="T_5f0ce_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Broad Street (2011–2015)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_50123_row0_col0" class="data row0 col0">Total Crashes</td>
-<td id="T_50123_row0_col1" class="data row0 col1">2,087</td>
+<td id="T_5f0ce_row0_col0" class="data row0 col0">Total Crashes</td>
+<td id="T_5f0ce_row0_col1" class="data row0 col1">2,087</td>
 </tr>
 <tr class="even">
-<td id="T_50123_row1_col0" class="data row1 col0">Fatalities</td>
-<td id="T_50123_row1_col1" class="data row1 col1">24</td>
+<td id="T_5f0ce_row1_col0" class="data row1 col0">Fatalities</td>
+<td id="T_5f0ce_row1_col1" class="data row1 col1">24</td>
 </tr>
 <tr class="odd">
-<td id="T_50123_row2_col0" class="data row2 col0">Share of city fatalities</td>
-<td id="T_50123_row2_col1" class="data row2 col1">5.1%</td>
+<td id="T_5f0ce_row2_col0" class="data row2 col0">Share of city fatalities</td>
+<td id="T_5f0ce_row2_col1" class="data row2 col1">5.1%</td>
 </tr>
 <tr class="even">
-<td id="T_50123_row3_col0" class="data row3 col0">Injuries</td>
-<td id="T_50123_row3_col1" class="data row3 col1">2,284</td>
+<td id="T_5f0ce_row3_col0" class="data row3 col0">Injuries</td>
+<td id="T_5f0ce_row3_col1" class="data row3 col1">2,284</td>
 </tr>
 <tr class="odd">
-<td id="T_50123_row4_col0" class="data row4 col0">Pedestrian deaths</td>
-<td id="T_50123_row4_col1" class="data row4 col1">13</td>
+<td id="T_5f0ce_row4_col0" class="data row4 col0">Pedestrian deaths</td>
+<td id="T_5f0ce_row4_col1" class="data row4 col1">13</td>
 </tr>
 <tr class="even">
-<td id="T_50123_row5_col0" class="data row5 col0">Pedestrian share of deaths</td>
-<td id="T_50123_row5_col1" class="data row5 col1">54.2%</td>
+<td id="T_5f0ce_row5_col0" class="data row5 col0">Pedestrian share of deaths</td>
+<td id="T_5f0ce_row5_col1" class="data row5 col1">54.2%</td>
 </tr>
 </tbody>
 </table>
@@ -576,44 +582,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Broad Street shows a different pattern of crash outcomes compared with Roosevelt Boulevard. Between 2011 and 2015, Broad Street recorded fewer crashes and fatalities overall, with 24 deaths and a 5.1 percent share of city fatalities, compared with 65 deaths and a 13.8 percent share on Roosevelt Boulevard. However, a much larger proportion of fatalities on Broad Street involved pedestrians. Over half of all deaths on Broad Street (54.2 percent) were pedestrians, compared with 33.8 percent on Roosevelt Boulevard. This highlights the different roles these roads play within the city. Roosevelt Boulevard functions as a wide, high-speed arterial corridor designed primarily for vehicle movement, whereas Broad Street runs through dense urban neighbourhoods with frequent pedestrian crossings and intersections.</p>
 <p>This pattern is consistent with broader findings about dangerous roads in Philadelphia. According to an analysis of PennDOT crash data reported by Wapner Newman, a seven-mile stretch of Broad Street ranked among Pennsylvania’s ten deadliest road segments, with multiple fatal crashes recorded between 2015 and 2017. While Broad Street may not account for as many total fatalities as Roosevelt Boulevard, the higher share of pedestrian deaths reflects the greater interaction between vehicles and pedestrians along one of the city’s busiest urban roadways.</p>
-<div id="cell-21" class="cell" data-execution_count="18">
+<div id="cell-21" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Broad Street share of city fatalities over time</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>broad_year_results <span class="op">=</span> []</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> years:</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    subset <span class="op">=</span> all_crashes[all_crashes[<span class="st">'CRASH_YEAR'</span>] <span class="op">==</span> y]</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    b_fatal, city_fatal, share <span class="op">=</span> corridor_stats(subset, broad_buf)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    broad_year_results.append([y, b_fatal, city_fatal, share])</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>broad_year_df <span class="op">=</span> pd.DataFrame(broad_year_results, columns<span class="op">=</span>[<span class="st">'year'</span>,<span class="st">'broad_fatal'</span>,<span class="st">'city_fatal'</span>,<span class="st">'share'</span>])</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>all_crashes <span class="op">=</span> phil_crashes_gdf.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>years <span class="op">=</span> <span class="bu">sorted</span>(all_crashes[<span class="st">'CRASH_YEAR'</span>].unique())</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corridor_stats(crash_gdf, corridor_buf):</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    joined <span class="op">=</span> gpd.sjoin(crash_gdf, corridor_buf, predicate<span class="op">=</span><span class="st">'within'</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    joined <span class="op">=</span> joined.drop_duplicates(subset<span class="op">=</span>[<span class="st">'CRN'</span>])</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>plt.plot(broad_year_df[<span class="st">'year'</span>],</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>         broad_year_df[<span class="st">'share'</span>],</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>         marker<span class="op">=</span><span class="st">'o'</span>,</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'darkgreen'</span>,</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>         label<span class="op">=</span><span class="st">'Broad Street share of city fatalities'</span>)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co"># vertical line for enforcement policy</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>plt.axvline(<span class="dv">2025</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'blue'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co"># annotation explaining the policy</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">2025.1</span>,</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>         broad_year_df[<span class="st">'share'</span>].<span class="bu">max</span>()<span class="op">*</span><span class="fl">0.9</span>,</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Speed cameras installed</span><span class="ch">\n</span><span class="st">Sept 15, 2025</span><span class="ch">\n</span><span class="st">Fines begin Nov 14, 2025"</span>,</span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>         fontsize<span class="op">=</span><span class="dv">9</span>,</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'blue'</span>)</span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Broad Street Share of City Fatalities Over Time"</span>)</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Share of City Fatalities"</span>)</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    total_fatal <span class="op">=</span> crash_gdf[<span class="st">'FATAL_COUNT'</span>].<span class="bu">sum</span>()</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    corridor_fatal <span class="op">=</span> joined[<span class="st">'FATAL_COUNT'</span>].<span class="bu">sum</span>()</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    share <span class="op">=</span> corridor_fatal <span class="op">/</span> total_fatal <span class="cf">if</span> total_fatal <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> np.nan</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> corridor_fatal, total_fatal, share</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> years:</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    subset <span class="op">=</span> all_crashes[all_crashes[<span class="st">'CRASH_YEAR'</span>] <span class="op">==</span> y]</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    b_fatal, city_fatal, share <span class="op">=</span> corridor_stats(subset, broad_buf)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    broad_year_results.append([y, b_fatal, city_fatal, share])</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>broad_year_df <span class="op">=</span> pd.DataFrame(broad_year_results, columns<span class="op">=</span>[<span class="st">'year'</span>,<span class="st">'broad_fatal'</span>,<span class="st">'city_fatal'</span>,<span class="st">'share'</span>])</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>plt.plot(broad_year_df[<span class="st">'year'</span>],</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>         broad_year_df[<span class="st">'share'</span>],</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>         marker<span class="op">=</span><span class="st">'o'</span>,</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'darkgreen'</span>,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>         label<span class="op">=</span><span class="st">'Broad Street share of city fatalities'</span>)</span>
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>plt.axvline(<span class="dv">2025</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'blue'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>plt.text(<span class="fl">2025.1</span>,</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>         broad_year_df[<span class="st">'share'</span>].<span class="bu">max</span>()<span class="op">*</span><span class="fl">0.9</span>,</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Speed cameras installed</span><span class="ch">\n</span><span class="st">Sept 15, 2025</span><span class="ch">\n</span><span class="st">Fines begin Nov 14, 2025"</span>,</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>         fontsize<span class="op">=</span><span class="dv">9</span>,</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>         color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Broad Street Share of City Fatalities Over Time"</span>)</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Share of City Fatalities"</span>)</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Year"</span>)</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -622,7 +640,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>https://6abc.com/post/broad-street-speed-cameras-activated-philadelphia-drivers-face-100-ticket/18154437/</p>
 <p>The figure above shows the share of all Philadelphia traffic fatalities occurring on Broad Street over time. For much of the early and mid-2000s, Broad Street consistently accounted for between 3 and 8 percent of the city’s annual fatalities. While this share fluctuated from year to year, the overall values remained noticeably lower than those observed on Roosevelt Boulevard, reflecting the smaller number of total fatal crashes recorded along the corridor.</p>
 <p>However, in more recent years the share increased noticeably, with several years after 2020 exceeding 8–11 percent of citywide fatalities. This upward trend explains why Broad Street had become a growing focus of traffic safety efforts within Philadelphia. As one of the city’s busiest north–south corridors passing through center city, the road experiences heavy vehicle traffic alongside significant pedestrian and cyclist activity, creating conditions where severe crashes can occur.</p>
 <p>In response to these concerns, the city introduced automated speed enforcement along Broad Street, with cameras installed at 15 intersections along North and South Broad Street. According to a report by <a href="https://6abc.com/post/broad-street-speed-cameras-activated-philadelphia-drivers-face-100-ticket/18154437/">6abc Philadelphia</a>, the cameras became fully operational in November 2025, after a 60-day warning period, with drivers caught exceeding the speed limit by more than 11 mph receiving fines starting at $100. According to the report, officials hope that the cameras will reduce speeding and improve safety in the same way that automated enforcement did on Roosevelt Boulevard, where violations dropped dramatically and pedestrian crashes declined significantly.</p>
@@ -630,6 +647,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>To conclude, the analysis reveals several consistent patterns in how crashes and fatalities occur across Philadelphia. While crashes are most frequent in dense areas and during daytime commuting hours, the most severe crashes tend to occur on large roads and during night time, when vehicles are able to travel at higher speeds, with lower visibility and often times, intoxicated drivers. Examining specific roads helps explain why certain locations develop reputations for danger. Roosevelt Boulevard stands out for the sheer scale of its impact, accounting for nearly 14% of citywide fatalities between 2011 and 2015, while Broad Street had fewer total deaths, but a much higher proportion involving pedestrians.</p>
+<p>These patterns also help answer the question raised in the introduction about the effectiveness of policy interventions. After automated speed enforcement cameras were introduced on Roosevelt Boulevard in 2020, the boulevard’s share of citywide fatalities declined noticeably, suggesting that the use of automated speed cameras on high-risk roads can drastically improve safety outcomes. Although it is still too early to observe the full effects of the recently installed cameras on Broad Street, the evidence from Roosevelt Boulevard indicates that targeted speed enforcement can play an important role in reducing the severity of crashes and improving road safety across the city.</p>
 
 
 </section>
