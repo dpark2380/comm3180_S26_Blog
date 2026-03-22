@@ -197,12 +197,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>Philadelphia has one of the highest rates of gun violence of any major American city. Between 2015 and 2023, over 15,000 shooting incidents were recorded by the Philadelphia Police Department, roughly five people shot every single day for nearly a decade. But who gets shot, and where? And crucially, is there something about a neighbourhood itself that makes it more dangerous?</p>
-<p>This analysis uses open data from two sources to explore that question. The shooting victims dataset comes from OpenDataPhilly, published by the Philadelphia Police Department, and contains 15,005 records spanning 2015 to 2023. Each record includes a precise latitude and longitude, a timestamp, the age and sex of the victim, and a flag indicating whether the shooting was fatal. After dropping a small number of records with missing coordinates, we are left with a clean, mappable dataset covering nearly a decade of gun violence across the city.</p>
-<p>The socioeconomic data comes from the US Census Bureau’s American Community Survey, specifically the B23025 employment status table from the 2024 five-year estimates. This gives us raw labour force counts for every ZIP code in Pennsylvania, from which we derive a comparable unemployment rate for each area. Philadelphia’s ZIP codes range from around 1.5% unemployment in wealthier areas like Chestnut Hill to over 16% in parts of North and West Philadelphia, a striking degree of economic inequality within a single city.</p>
-<p>By joining these two datasets through a spatial join on ZIP code boundaries, we can ask a simple but important question: do the neighbourhoods where unemployment is highest also tend to be the neighbourhoods where people get shot?</p>
+<p>This analysis uses open data from two sources to explore that question. The shooting data comes from the Philadelphia Police Department, made publicly available through OpenDataPhilly, and covers 15,005 recorded shootings between 2015 and 2023. Each record includes a precise latitude and longitude, a timestamp, the age and sex of the victim, and a flag indicating whether the shooting was fatal. After dropping a small number of records with missing coordinates, we are left with a clean, mappable dataset covering nearly a decade of gun violence across the city.</p>
+<p>The socioeconomic data comes from the US Census Bureau’s American Community Survey. This gives us raw labour force counts for every ZIP code in Pennsylvania, from which we derive a comparable unemployment rate for each area. Philadelphia’s ZIP codes range from around 1.5% unemployment in wealthier areas like Chestnut Hill to over 16% in parts of North and West Philadelphia, a striking degree of economic inequality within a single city.</p>
+<p>Through these two datasets, we can ask a simple but important question: do the neighbourhoods where unemployment is highest also tend to be the neighbourhoods where people get shot?</p>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">1. Setup</h2>
-<div id="cell-3" class="cell" data-execution_count="5">
+<div id="cell-3" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -221,9 +221,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>shootings <span class="op">=</span> pd.read_csv(<span class="st">'data/openphilly_data_shootings.csv'</span>)</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>acs <span class="op">=</span> pd.read_csv(<span class="st">'data/acs2024_5yr_B23025_86000US19108.csv'</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>zip_plot <span class="op">=</span> gpd.read_file(<span class="st">'data/Zipcodes_Poly.geojson'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>zip_boundaries <span class="op">=</span> gpd.read_file(<span class="st">'data/Zipcodes_Poly.geojson'</span>).to_crs(<span class="st">'EPSG:4326'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-4" class="cell" data-execution_count="6">
+<div id="cell-4" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute unemployment rate from raw counts</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'zipcode'</span>]           <span class="op">=</span> acs[<span class="st">'name'</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'labor_force'</span>]       <span class="op">=</span> pd.to_numeric(acs[<span class="st">'B23025003'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
@@ -237,9 +237,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="where-do-shootings-happen" class="level2">
 <h2 class="anchored" data-anchor-id="where-do-shootings-happen">2. Where Do Shootings Happen?</h2>
-<p>A map of every shooting in the dataset tells a striking story immediately. Gun violence in Philadelphia is not spread evenly across the city — it clusters tightly in specific neighbourhoods, leaving large swathes of the city almost entirely untouched. So what’s different about those areas?</p>
-<div id="cell-6" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Section 2: City-Wide Shooting Locations ──────────────────────────────────</span></span>
+<p>The most immediate way to understand Philadelphia’s gun violence problem is to look at where it actually occurs.</p>
+<div id="cell-6" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># City-Wide Shooting Locations</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>shootings <span class="op">=</span> shootings.dropna(subset<span class="op">=</span>[<span class="st">'lat'</span>, <span class="st">'lng'</span>]).copy()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>shootings[<span class="st">'fatal_label'</span>] <span class="op">=</span> shootings[<span class="st">'fatal'</span>].<span class="bu">map</span>({<span class="fl">1.0</span>: <span class="st">'Fatal'</span>, <span class="fl">0.0</span>: <span class="st">'Non-Fatal'</span>})</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>shootings[<span class="st">'hour'</span>] <span class="op">=</span> pd.to_datetime(shootings[<span class="st">'time'</span>], <span class="bu">format</span><span class="op">=</span><span class="st">'%H:%M:%S'</span>, errors<span class="op">=</span><span class="st">'coerce'</span>).dt.hour</span>
@@ -317,43 +317,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Before examining the role of neighbourhood economics, it is worth understanding the basic characteristics of the shootings themselves. Who are the victims? When do incidents occur? And are some types of shooting more likely to be fatal than others?</p>
 <section id="shooting-patterns-by-time-of-day" class="level3">
 <h3 class="anchored" data-anchor-id="shooting-patterns-by-time-of-day">3.1 Shooting Patterns by Time of Day</h3>
-<div id="cell-9" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Section 2: Distribution of Shootings ─────────────────────────────────────</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">5</span>))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Shooting Patterns by Time of Day — Philadelphia (2015–2023)"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>             fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Plot 1: Shootings by hour ──</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>hourly <span class="op">=</span> shootings_gdf.groupby(<span class="st">'hour'</span>).size()</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">'#151b54'</span> <span class="cf">if</span> (h <span class="op">&gt;=</span> <span class="dv">20</span> <span class="kw">or</span> h <span class="op">&lt;</span> <span class="dv">6</span>) <span class="cf">else</span> <span class="st">'#f4a261'</span> <span class="cf">for</span> h <span class="kw">in</span> hourly.index]</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>bars <span class="op">=</span> axes[<span class="dv">0</span>].bar(hourly.index, hourly.values, color<span class="op">=</span>colors, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">"Number of Shootings by Hour"</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">"Hour (24h)"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">"Number of Shootings"</span>)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xticks(<span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">2</span>))</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#151b54'</span>, label<span class="op">=</span><span class="st">'Night (8pm–6am)'</span>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#f4a261'</span>, label<span class="op">=</span><span class="st">'Day (6am–8pm)'</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend(fontsize<span class="op">=</span><span class="dv">8</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Plot 2: Fatality rate by hour ──</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>hourly_fatal <span class="op">=</span> shootings_gdf.groupby(<span class="st">'hour'</span>)[<span class="st">'fatal'</span>].mean() <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>colors_fatal <span class="op">=</span> [<span class="st">'#151b54'</span> <span class="cf">if</span> (h <span class="op">&gt;=</span> <span class="dv">20</span> <span class="kw">or</span> h <span class="op">&lt;</span> <span class="dv">6</span>) <span class="cf">else</span> <span class="st">'#f4a261'</span> <span class="cf">for</span> h <span class="kw">in</span> hourly_fatal.index]</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar(hourly_fatal.index, hourly_fatal.values, color<span class="op">=</span>colors_fatal, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>mean_fatal <span class="op">=</span> shootings_gdf[<span class="st">'fatal'</span>].mean() <span class="op">*</span> <span class="dv">100</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axhline(mean_fatal, color<span class="op">=</span><span class="st">'#c1121f'</span>, lw<span class="op">=</span><span class="fl">1.5</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">"Fatality Rate by Hour"</span>)</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">"Hour (24h)"</span>)</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">"Fatality Rate (%)"</span>)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xticks(<span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">2</span>))</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#151b54'</span>, label<span class="op">=</span><span class="st">'Night (8pm–6am)'</span>)</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#f4a261'</span>, label<span class="op">=</span><span class="st">'Day (6am–8pm)'</span>)</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot([], [], color<span class="op">=</span><span class="st">'#c1121f'</span>, lw<span class="op">=</span><span class="fl">1.5</span>, linestyle<span class="op">=</span><span class="st">'--'</span>,</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>             label<span class="op">=</span><span class="ss">f'Overall mean: </span><span class="sc">{</span>mean_fatal<span class="sc">:.1f}</span><span class="ss">%'</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend(fontsize<span class="op">=</span><span class="dv">8</span>)</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-9" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">5</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Shooting Patterns by Time of Day — Philadelphia (2015–2023)"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>             fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Shootings by hour</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>hourly <span class="op">=</span> shootings_gdf.groupby(<span class="st">'hour'</span>).size()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">'#151b54'</span> <span class="cf">if</span> (h <span class="op">&gt;=</span> <span class="dv">20</span> <span class="kw">or</span> h <span class="op">&lt;</span> <span class="dv">6</span>) <span class="cf">else</span> <span class="st">'#f4a261'</span> <span class="cf">for</span> h <span class="kw">in</span> hourly.index]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>bars <span class="op">=</span> axes[<span class="dv">0</span>].bar(hourly.index, hourly.values, color<span class="op">=</span>colors, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">"Number of Shootings by Hour"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">"Hour (24h)"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">"Number of Shootings"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_xticks(<span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">2</span>))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#151b54'</span>, label<span class="op">=</span><span class="st">'Night (8pm–6am)'</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#f4a261'</span>, label<span class="op">=</span><span class="st">'Day (6am–8pm)'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].legend(fontsize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Fatality rate by hour</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>hourly_fatal <span class="op">=</span> shootings_gdf.groupby(<span class="st">'hour'</span>)[<span class="st">'fatal'</span>].mean() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>colors_fatal <span class="op">=</span> [<span class="st">'#151b54'</span> <span class="cf">if</span> (h <span class="op">&gt;=</span> <span class="dv">20</span> <span class="kw">or</span> h <span class="op">&lt;</span> <span class="dv">6</span>) <span class="cf">else</span> <span class="st">'#f4a261'</span> <span class="cf">for</span> h <span class="kw">in</span> hourly_fatal.index]</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar(hourly_fatal.index, hourly_fatal.values, color<span class="op">=</span>colors_fatal, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>mean_fatal <span class="op">=</span> shootings_gdf[<span class="st">'fatal'</span>].mean() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axhline(mean_fatal, color<span class="op">=</span><span class="st">'#c1121f'</span>, lw<span class="op">=</span><span class="fl">1.5</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">"Fatality Rate by Hour"</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">"Hour (24h)"</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">"Fatality Rate (%)"</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_xticks(<span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">2</span>))</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#151b54'</span>, label<span class="op">=</span><span class="st">'Night (8pm–6am)'</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].bar(<span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'#f4a261'</span>, label<span class="op">=</span><span class="st">'Day (6am–8pm)'</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].plot([], [], color<span class="op">=</span><span class="st">'#c1121f'</span>, lw<span class="op">=</span><span class="fl">1.5</span>, linestyle<span class="op">=</span><span class="st">'--'</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>             label<span class="op">=</span><span class="ss">f'Overall mean: </span><span class="sc">{</span>mean_fatal<span class="sc">:.1f}</span><span class="ss">%'</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend(fontsize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -362,27 +360,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Shootings peak sharply in the late evening and early morning hours, with the quietest period running from around 6am to midday. Nearly half of all shootings in the dataset occur at night, but does that make them more deadly? Somewhat surprisingly, the fatal rate between day and night shootings is almost identical, suggesting that the circumstances driving lethality are relatively consistent regardless of when a shooting occurs.</p>
+<p>Shootings peak sharply in the late evening hours, with the highest counts recorded between 9pm and midnight, before tapering off through the early morning. The quietest period runs from around 6am to midday, where incident counts drop to their lowest point of the day before gradually climbing again through the afternoon. The pattern is consistent with what one might expect from street-level conflict, concentrated in the hours when people are out socialising and when natural supervision of public spaces is lowest.</p>
+<p>The fatality rate chart on the right tells a more nuanced story. The overall mean sits at 20.7%, shown by the red dashed line, and most hours lie relatively close to that figure. However, early morning hours between 4am and 8am show a noticeably higher fatality rate, regularly exceeding 25% and peaking close to 29%.</p>
+<p>Two factors likely contribute to this. First, research has found that night-time injury is associated with <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10729124/">worse outcomes in gun violence victims</a>, consistent with the idea that early morning incidents tend to be more severe or targeted in nature. Second, <a href="https://www.acpjournals.org/doi/10.7326/ANNALS-24-02874">delays in accessing trauma care are associated with increased mortality after severe gunshot wounds</a>, and early morning hours are precisely when emergency staffing is likely to be under the most strain. Gunshot victims are more likely to die the further they are from a trauma center, a finding that compounds the time-of-day effect when both distance and response capacity are less favourable. Together these factors help explain why the hours between 4am and 8am, despite accounting for relatively few shootings in absolute terms, produce a disproportionately high share of fatalities.</p>
+<p>Counterintuitively, the late night hours from 9pm to midnight, despite being when the most shootings occur in absolute terms, do not show an elevated fatality rate. The sheer volume of incidents at those hours appears to include a higher proportion of non-fatal shootings, perhaps reflecting more chaotic, less targeted violence in crowded settings where wounds are less likely to be immediately fatal. The takeaway is that when a shooting is most likely to happen and when it is most likely to kill are two different questions with different answers.</p>
 </section>
 <section id="age-distribution-of-victims" class="level3">
 <h3 class="anchored" data-anchor-id="age-distribution-of-victims">3.2 Age Distribution of Victims</h3>
-<div id="cell-12" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Age Distribution ──────────────────────────────────────────────────────────</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>ax.hist(shootings_gdf[<span class="st">'age'</span>].dropna(), bins<span class="op">=</span><span class="dv">40</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">'#c1121f'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Age Distribution of Shooting Victims — Philadelphia (2015–2023)"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>             fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Age"</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Number of Shootings"</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ax.axvline(shootings_gdf[<span class="st">'age'</span>].median(), color<span class="op">=</span><span class="st">'#151b54'</span>,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>           lw<span class="op">=</span><span class="dv">2</span>, linestyle<span class="op">=</span><span class="st">'--'</span>,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="ss">f'Median age: </span><span class="sc">{</span>shootings_gdf[<span class="st">"age"</span>]<span class="sc">.</span>median()<span class="sc">:.0f}</span><span class="ss">'</span>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-12" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ax.hist(shootings_gdf[<span class="st">'age'</span>].dropna(), bins<span class="op">=</span><span class="dv">40</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">'#c1121f'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Age Distribution of Shooting Victims — Philadelphia (2015–2023)"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>             fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Age"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Number of Shootings"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ax.axvline(shootings_gdf[<span class="st">'age'</span>].median(), color<span class="op">=</span><span class="st">'#151b54'</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>           lw<span class="op">=</span><span class="dv">2</span>, linestyle<span class="op">=</span><span class="st">'--'</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>           label<span class="op">=</span><span class="ss">f'Median age: </span><span class="sc">{</span>shootings_gdf[<span class="st">"age"</span>]<span class="sc">.</span>median()<span class="sc">:.0f}</span><span class="ss">'</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -399,130 +398,126 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="does-unemployment-predict-gun-violence" class="level2">
 <h2 class="anchored" data-anchor-id="does-unemployment-predict-gun-violence">4. Does Unemployment Predict Gun Violence?</h2>
-<p>This is the central question of the analysis. Philadelphia has 48 ZIP codes with meaningful population data — does the unemployment rate in a ZIP code tell us anything useful about how many shootings happen there?</p>
-<section id="the-unemployment-landscape" class="level3">
-<h3 class="anchored" data-anchor-id="the-unemployment-landscape">4.1 The Unemployment Landscape</h3>
-<p>Before correlating unemployment with shootings, it helps to see how unemployment itself is distributed across the city. Is economic deprivation as geographically concentrated as gun violence?</p>
-<div id="cell-15" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Build zip_plot ───────────────────────────────────────────────────────────</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load ZIP boundaries</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>zip_boundaries <span class="op">=</span> gpd.read_file(<span class="st">'data/Zipcodes_Poly.geojson'</span>).to_crs(<span class="st">'EPSG:4326'</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load &amp; compute unemployment</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>acs <span class="op">=</span> pd.read_csv(<span class="st">'data/acs2024_5yr_B23025_86000US19108.csv'</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'zipcode'</span>]           <span class="op">=</span> acs[<span class="st">'name'</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip()</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'labor_force'</span>]       <span class="op">=</span> pd.to_numeric(acs[<span class="st">'B23025003'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'unemployed'</span>]        <span class="op">=</span> pd.to_numeric(acs[<span class="st">'B23025005'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'unemployment_rate'</span>] <span class="op">=</span> (acs[<span class="st">'unemployed'</span>] <span class="op">/</span> acs[<span class="st">'labor_force'</span>] <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>acs_philly <span class="op">=</span> acs[acs[<span class="st">'zipcode'</span>].<span class="bu">str</span>.startswith(<span class="st">'191'</span>)].dropna(subset<span class="op">=</span>[<span class="st">'unemployment_rate'</span>])</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>acs_philly <span class="op">=</span> acs_philly[acs_philly[<span class="st">'labor_force'</span>] <span class="op">&gt;</span> <span class="dv">100</span>].copy()</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Spatial join shootings to ZIP codes</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>shootings_with_zip <span class="op">=</span> gpd.sjoin(</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    shootings_gdf[[<span class="st">'fatal'</span>, <span class="st">'time_of_day'</span>, <span class="st">'geometry'</span>]],</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    zip_boundaries[[<span class="st">'CODE'</span>, <span class="st">'geometry'</span>]],</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'left'</span>, predicate<span class="op">=</span><span class="st">'within'</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>).rename(columns<span class="op">=</span>{<span class="st">'CODE'</span>: <span class="st">'zipcode'</span>})</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>shootings_with_zip[<span class="st">'zipcode'</span>] <span class="op">=</span> shootings_with_zip[<span class="st">'zipcode'</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip()</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate shootings by ZIP</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>shootings_by_zip <span class="op">=</span> (shootings_with_zip</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    .dropna(subset<span class="op">=</span>[<span class="st">'zipcode'</span>])</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'zipcode'</span>)</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    .agg(n_shootings<span class="op">=</span>(<span class="st">'fatal'</span>, <span class="st">'count'</span>), fatal_rate<span class="op">=</span>(<span class="st">'fatal'</span>, <span class="st">'mean'</span>))</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge everything</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> pd.merge(</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    acs_philly[[<span class="st">'zipcode'</span>, <span class="st">'unemployment_rate'</span>, <span class="st">'labor_force'</span>, <span class="st">'unemployed'</span>]],</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    shootings_by_zip, on<span class="op">=</span><span class="st">'zipcode'</span>, how<span class="op">=</span><span class="st">'inner'</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge with boundaries for plotting</span></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>zip_plot <span class="op">=</span> zip_boundaries.merge(merged, left_on<span class="op">=</span><span class="st">'CODE'</span>, right_on<span class="op">=</span><span class="st">'zipcode'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'n_shootings'</span>] <span class="op">=</span> zip_plot[<span class="st">'n_shootings'</span>].fillna(<span class="dv">0</span>)</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'unemployment_rate'</span>] <span class="op">=</span> zip_plot[<span class="st">'unemployment_rate'</span>].fillna(<span class="dv">0</span>)</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'fatal_rate'</span>] <span class="op">=</span> zip_plot[<span class="st">'fatal_rate'</span>].fillna(<span class="dv">0</span>)</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'shootings_norm'</span>] <span class="op">=</span> (zip_plot[<span class="st">'n_shootings'</span>] <span class="op">/</span> zip_plot[<span class="st">'n_shootings'</span>].<span class="bu">max</span>() <span class="op">*</span> <span class="dv">40</span>) <span class="op">+</span> <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is the central question of the analysis. Philadelphia has 48 ZIP codes with meaningful population data; does the unemployment rate in a ZIP code tell us anything useful about how many shootings happen there?</p>
+<section id="spatial-overlap-between-unemployment-and-shootings" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-overlap-between-unemployment-and-shootings">4.1 Spatial Overlap between Unemployment and Shootings</h3>
+<p>Before running any correlations, the most immediate question is whether unemployment and gun violence even occupy the same parts of the city. The map below answers that question directly, overlaying both variables at once. ZIP codes are coloured by unemployment rate, running from green in lower unemployment areas through to deep red at the highest.</p>
+<div id="cell-15" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading and computing unemployment</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>acs <span class="op">=</span> pd.read_csv(<span class="st">'data/acs2024_5yr_B23025_86000US19108.csv'</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'zipcode'</span>]           <span class="op">=</span> acs[<span class="st">'name'</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'labor_force'</span>]       <span class="op">=</span> pd.to_numeric(acs[<span class="st">'B23025003'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'unemployed'</span>]        <span class="op">=</span> pd.to_numeric(acs[<span class="st">'B23025005'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>acs[<span class="st">'unemployment_rate'</span>] <span class="op">=</span> (acs[<span class="st">'unemployed'</span>] <span class="op">/</span> acs[<span class="st">'labor_force'</span>] <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>acs_philly <span class="op">=</span> acs[acs[<span class="st">'zipcode'</span>].<span class="bu">str</span>.startswith(<span class="st">'191'</span>)].dropna(subset<span class="op">=</span>[<span class="st">'unemployment_rate'</span>])</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>acs_philly <span class="op">=</span> acs_philly[acs_philly[<span class="st">'labor_force'</span>] <span class="op">&gt;</span> <span class="dv">100</span>].copy()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Spatial join shootings to ZIP codes</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>shootings_with_zip <span class="op">=</span> gpd.sjoin(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    shootings_gdf[[<span class="st">'fatal'</span>, <span class="st">'time_of_day'</span>, <span class="st">'geometry'</span>]],</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    zip_boundaries[[<span class="st">'CODE'</span>, <span class="st">'geometry'</span>]],</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">'left'</span>, predicate<span class="op">=</span><span class="st">'within'</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>).rename(columns<span class="op">=</span>{<span class="st">'CODE'</span>: <span class="st">'zipcode'</span>})</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>shootings_with_zip[<span class="st">'zipcode'</span>] <span class="op">=</span> shootings_with_zip[<span class="st">'zipcode'</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip()</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate shootings by ZIP</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>shootings_by_zip <span class="op">=</span> (shootings_with_zip</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    .dropna(subset<span class="op">=</span>[<span class="st">'zipcode'</span>])</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'zipcode'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    .agg(n_shootings<span class="op">=</span>(<span class="st">'fatal'</span>, <span class="st">'count'</span>), fatal_rate<span class="op">=</span>(<span class="st">'fatal'</span>, <span class="st">'mean'</span>))</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Merging</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> pd.merge(</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    acs_philly[[<span class="st">'zipcode'</span>, <span class="st">'unemployment_rate'</span>, <span class="st">'labor_force'</span>, <span class="st">'unemployed'</span>]],</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    shootings_by_zip, on<span class="op">=</span><span class="st">'zipcode'</span>, how<span class="op">=</span><span class="st">'inner'</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge with boundaries for plotting</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>zip_plot <span class="op">=</span> zip_boundaries.merge(merged, left_on<span class="op">=</span><span class="st">'CODE'</span>, right_on<span class="op">=</span><span class="st">'zipcode'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'n_shootings'</span>] <span class="op">=</span> zip_plot[<span class="st">'n_shootings'</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'unemployment_rate'</span>] <span class="op">=</span> zip_plot[<span class="st">'unemployment_rate'</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'fatal_rate'</span>] <span class="op">=</span> zip_plot[<span class="st">'fatal_rate'</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'shootings_norm'</span>] <span class="op">=</span> (zip_plot[<span class="st">'n_shootings'</span>] <span class="op">/</span> zip_plot[<span class="st">'n_shootings'</span>].<span class="bu">max</span>() <span class="op">*</span> <span class="dv">40</span>) <span class="op">+</span> <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-16" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Section 4.1 &amp; 4.2: Unemployment + Shooting Count on Single Map ───────────</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.choropleth_mapbox(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    zip_plot,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    geojson<span class="op">=</span>zip_plot.__geo_interface__,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    locations<span class="op">=</span>zip_plot.index,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'unemployment_rate'</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    color_continuous_scale<span class="op">=</span><span class="st">'RdYlGn_r'</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    range_color<span class="op">=</span>[zip_plot[<span class="st">'unemployment_rate'</span>].<span class="bu">min</span>(), zip_plot[<span class="st">'unemployment_rate'</span>].<span class="bu">max</span>()],</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    mapbox_style<span class="op">=</span><span class="st">'carto-positron'</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    zoom<span class="op">=</span><span class="fl">10.5</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    center<span class="op">=</span>{<span class="st">'lat'</span>: <span class="fl">39.9916</span>, <span class="st">'lon'</span>: <span class="op">-</span><span class="fl">75.1312</span>},</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    opacity<span class="op">=</span><span class="fl">0.6</span>,</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    custom_data<span class="op">=</span>[<span class="st">'CODE'</span>, <span class="st">'unemployment_rate'</span>, <span class="st">'n_shootings'</span>, <span class="st">'fatal_rate'</span>],</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">'unemployment_rate'</span>: <span class="st">'Unemployment Rate (%)'</span>},</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Unemployment Rate (colour) &amp; Shooting Count (bubbles) by ZIP Code&lt;br&gt;'</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>          <span class="st">'&lt;sup&gt;Hover over ZIP areas or bubbles for details&lt;/sup&gt;'</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>fig.update_traces(</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    hovertemplate<span class="op">=</span>(</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;b&gt;ZIP %</span><span class="sc">{customdata[0]}</span><span class="st">&lt;/b&gt;&lt;br&gt;'</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Unemployment: %</span><span class="sc">{customdata[1]:.1f}</span><span class="st">%&lt;br&gt;'</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Shootings: %</span><span class="sc">{customdata[2]}</span><span class="st">&lt;br&gt;'</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Fatal rate: %</span><span class="sc">{customdata[3]:.1%}</span><span class="st">&lt;br&gt;'</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;extra&gt;&lt;/extra&gt;'</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Bubble overlay — shooting count ──</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'centroid_lat'</span>] <span class="op">=</span> zip_plot.geometry.centroid.y</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'centroid_lng'</span>] <span class="op">=</span> zip_plot.geometry.centroid.x</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'shootings_norm'</span>] <span class="op">=</span> (zip_plot[<span class="st">'n_shootings'</span>] <span class="op">/</span> zip_plot[<span class="st">'n_shootings'</span>].<span class="bu">max</span>() <span class="op">*</span> <span class="dv">40</span>) <span class="op">+</span> <span class="dv">5</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>fig.add_scattermapbox(</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    lat<span class="op">=</span>zip_plot[<span class="st">'centroid_lat'</span>],</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    lon<span class="op">=</span>zip_plot[<span class="st">'centroid_lng'</span>],</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">'markers'</span>,</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="bu">dict</span>(</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span>zip_plot[<span class="st">'shootings_norm'</span>],</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>zip_plot[<span class="st">'n_shootings'</span>],</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        colorscale<span class="op">=</span><span class="st">'Reds'</span>,</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        opacity<span class="op">=</span><span class="fl">0.75</span>,</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        showscale<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        colorbar<span class="op">=</span><span class="bu">dict</span>(</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">'Shootings'</span>,</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="fl">1.15</span>,</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>            thickness<span class="op">=</span><span class="dv">12</span>,</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>            <span class="bu">len</span><span class="op">=</span><span class="fl">0.8</span></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    customdata<span class="op">=</span>zip_plot[[<span class="st">'CODE'</span>, <span class="st">'unemployment_rate'</span>, <span class="st">'n_shootings'</span>, <span class="st">'fatal_rate'</span>]].values,</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    hovertemplate<span class="op">=</span>(</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;b&gt;ZIP %</span><span class="sc">{customdata[0]}</span><span class="st">&lt;/b&gt;&lt;br&gt;'</span></span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Unemployment: %</span><span class="sc">{customdata[1]:.1f}</span><span class="st">%&lt;br&gt;'</span></span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Shootings: %</span><span class="sc">{customdata[2]}</span><span class="st">&lt;br&gt;'</span></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Fatal rate: %</span><span class="sc">{customdata[3]:.1%}</span><span class="st">&lt;br&gt;'</span></span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;extra&gt;&lt;/extra&gt;'</span></span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'Shooting Count'</span></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>fig.update_layout(</span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    coloraxis_colorbar<span class="op">=</span><span class="bu">dict</span>(</span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">'Unemployment&lt;br&gt;Rate (%)'</span>,</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        thickness<span class="op">=</span><span class="dv">12</span>,</span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="fl">1.0</span>,        </span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span><span class="op">=</span><span class="fl">0.8</span></span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">0</span>, r<span class="op">=</span><span class="dv">120</span>, t<span class="op">=</span><span class="dv">60</span>, b<span class="op">=</span><span class="dv">0</span>),  <span class="co"># increase right margin to make room</span></span>
-<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">650</span>,</span>
-<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-16" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unemployment + Shooting Count on Single Map</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'neighbourhood'</span>] <span class="op">=</span> zip_plot[<span class="st">'CODE'</span>].astype(<span class="bu">str</span>).<span class="bu">map</span>(ZIP_TO_NEIGHBOURHOOD).fillna(<span class="st">'Unknown'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.choropleth_mapbox(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    zip_plot,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    geojson<span class="op">=</span>zip_plot.__geo_interface__,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    locations<span class="op">=</span>zip_plot.index,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'unemployment_rate'</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    color_continuous_scale<span class="op">=</span><span class="st">'RdYlGn_r'</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    range_color<span class="op">=</span>[zip_plot[<span class="st">'unemployment_rate'</span>].<span class="bu">min</span>(), zip_plot[<span class="st">'unemployment_rate'</span>].<span class="bu">max</span>()],</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    mapbox_style<span class="op">=</span><span class="st">'carto-positron'</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    zoom<span class="op">=</span><span class="fl">10.5</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    center<span class="op">=</span>{<span class="st">'lat'</span>: <span class="fl">39.9916</span>, <span class="st">'lon'</span>: <span class="op">-</span><span class="fl">75.1312</span>},</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    opacity<span class="op">=</span><span class="fl">0.6</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    custom_data<span class="op">=</span>[<span class="st">'CODE'</span>, <span class="st">'neighbourhood'</span>, <span class="st">'unemployment_rate'</span>, <span class="st">'n_shootings'</span>, <span class="st">'fatal_rate'</span>],</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">'unemployment_rate'</span>: <span class="st">'Unemployment Rate (%)'</span>},</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Unemployment Rate (colour) &amp; Shooting Count (bubbles) by ZIP Code&lt;br&gt;'</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>          <span class="st">'&lt;sup&gt;Hover over ZIP areas or bubbles for details&lt;/sup&gt;'</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>fig.update_traces(</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    hovertemplate<span class="op">=</span>(</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;b&gt;%</span><span class="sc">{customdata[1]}</span><span class="st">&lt;/b&gt; (ZIP %</span><span class="sc">{customdata[0]}</span><span class="st">)&lt;br&gt;'</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Unemployment: %</span><span class="sc">{customdata[2]:.1f}</span><span class="st">%&lt;br&gt;'</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Shootings: %</span><span class="sc">{customdata[3]}</span><span class="st">&lt;br&gt;'</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Fatal rate: %</span><span class="sc">{customdata[4]:.1%}</span><span class="st">&lt;br&gt;'</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;extra&gt;&lt;/extra&gt;'</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'centroid_lat'</span>] <span class="op">=</span> zip_plot.geometry.centroid.y</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'centroid_lng'</span>] <span class="op">=</span> zip_plot.geometry.centroid.x</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>zip_plot[<span class="st">'shootings_norm'</span>] <span class="op">=</span> (zip_plot[<span class="st">'n_shootings'</span>] <span class="op">/</span> zip_plot[<span class="st">'n_shootings'</span>].<span class="bu">max</span>() <span class="op">*</span> <span class="dv">40</span>) <span class="op">+</span> <span class="dv">5</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>fig.add_scattermapbox(</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    lat<span class="op">=</span>zip_plot[<span class="st">'centroid_lat'</span>],</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    lon<span class="op">=</span>zip_plot[<span class="st">'centroid_lng'</span>],</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">'markers'</span>,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span>zip_plot[<span class="st">'shootings_norm'</span>],</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span>zip_plot[<span class="st">'n_shootings'</span>],</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        colorscale<span class="op">=</span><span class="st">'Reds'</span>,</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        opacity<span class="op">=</span><span class="fl">0.75</span>,</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        showscale<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        colorbar<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">'Shootings'</span>,</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="fl">1.15</span>,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>            thickness<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>            <span class="bu">len</span><span class="op">=</span><span class="fl">0.8</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    customdata<span class="op">=</span>zip_plot[[<span class="st">'CODE'</span>, <span class="st">'neighbourhood'</span>, <span class="st">'unemployment_rate'</span>, <span class="st">'n_shootings'</span>, <span class="st">'fatal_rate'</span>]].values,</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    hovertemplate<span class="op">=</span>(</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;b&gt;%</span><span class="sc">{customdata[1]}</span><span class="st">&lt;/b&gt; (ZIP %</span><span class="sc">{customdata[0]}</span><span class="st">)&lt;br&gt;'</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Unemployment: %</span><span class="sc">{customdata[2]:.1f}</span><span class="st">%&lt;br&gt;'</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Shootings: %</span><span class="sc">{customdata[3]}</span><span class="st">&lt;br&gt;'</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Fatal rate: %</span><span class="sc">{customdata[4]:.1%}</span><span class="st">&lt;br&gt;'</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">'&lt;extra&gt;&lt;/extra&gt;'</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'Shooting Count'</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>fig.update_layout(</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    coloraxis_colorbar<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">'Unemployment&lt;br&gt;Rate (%)'</span>,</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>        thickness<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>        <span class="bu">len</span><span class="op">=</span><span class="fl">0.8</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">0</span>, r<span class="op">=</span><span class="dv">120</span>, t<span class="op">=</span><span class="dv">60</span>, b<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">650</span>,</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -531,15 +526,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>The map above layers two variables simultaneously across Philadelphia’s ZIP codes. The background colour of each ZIP code represents its unemployment rate, where green indicates lower unemployment, moving through yellow and orange to deep red for the highest rates. The bubbles overlaid at the centre of each ZIP code represent the total number of shootings recorded between 2015 and 2023, with larger and darker bubbles indicating more incidents.</p>
-<p>The pattern that emerges is striking. The cluster of dark red ZIP codes running through North and West Philadelphia, particularly around 19140, 19132, and 19133, coincides almost exactly with the largest and darkest shooting bubbles on the map. These are neighbourhoods where unemployment consistently exceeds 12 to 16%, and where shooting counts run into the hundreds or thousands over the nine-year period.</p>
+<p>The map above layers two variables simultaneously across Philadelphia’s ZIP codes. The bubbles show total shooting count, with larger and darker bubbles indicating more incidents. Hover over any ZIP code or bubble to see the full breakdown. The background colour of each ZIP code represents its unemployment rate, where green indicates lower unemployment, moving through yellow and orange to deep red for the highest rates.</p>
+<p>The pattern that emerges is striking. The cluster of dark red ZIP codes running through North and West Philadelphia, particularly around Logan / Fern Rock (19140), Nicetown / Tioga (19132), and Hunting Park / Fairhill (19133), coincides almost exactly with the largest and darkest shooting bubbles on the map. These are neighbourhoods where unemployment consistently exceeds 12 to 16%, and where shooting counts run into the hundreds or thousands over the nine-year period.</p>
 <p>By contrast, the green ZIP codes ringing the city’s edges are largely suburban or wealthier neighbourhoods. These pair with small and faint bubbles, reflecting both lower unemployment and far fewer shooting incidents.</p>
 <p>One notable exception is the large dark bubble sitting over West Philadelphia, which shows a high shooting count relative to its moderate unemployment rate. This suggests that other factors beyond unemployment alone are shaping violence in that particular area, a limitation worth keeping in mind when interpreting the results.</p>
 </section>
 <section id="more-unemployment-more-shootings" class="level3">
 <h3 class="anchored" data-anchor-id="more-unemployment-more-shootings">4.2 More Unemployment, More Shootings?</h3>
-<p>To test this properly, we aggregate shootings by ZIP code and plot them against the unemployment rate. If the relationship is real, we’d expect a clear upward trend — ZIP codes with higher unemployment should have more shootings.</p>
-<p><em>[Code: scatter plot unemployment rate vs n_shootings with regression line and ZIP code labels]</em></p>
+<p>To test this properly, we aggregate shootings by ZIP code and plot them against the unemployment rate. If the relationship is real, we’d expect a clear upward trend. ZIP codes with higher unemployment should have more shootings.</p>
 <div id="cell-19" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Section 4.2: Unemployment Rate vs. Shooting Count (Interactive) ───────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -605,14 +599,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>The data supports this clearly. The Pearson correlation between unemployment rate and shooting count is r = 0.559 (p &lt; 0.001), a moderate to strong positive relationship that is highly statistically significant. In plain terms, ZIP codes with higher unemployment consistently experience more shootings. Notable ZIP codes like 19140 and 19132 sit near the top of both axes, closely following the trend.</p>
-<p>There are some interesting outliers worth discussing. ZIP code 19134, covering the Kensington neighbourhood, has substantially more shootings than its unemployment rate alone would predict. Kensington is home to one of the most notorious open-air drug markets in the United States, centred around the intersection of Kensington and Allegheny Avenues, locally known as “the corner”. The area is characterised by widespread open drug use, extreme homelessness, and discarded syringes, conditions that create an environment where violence is driven by factors well beyond unemployment statistics alone. The city launched a Kensington Community Revival plan in 2024, and early results show some promise, with reported reductions of 45% in homicides and 17% in overall violent crime compared to 2023. Whether these gains are sustained remains to be seen, but Kensington stands as a clear example of how localised social crises can push shooting rates far above what neighbourhood economics would predict (The Philadelphia Citizen, Kensington’s Safety Plan Shows Early Promise, March 2025).</p>
-<p>Meanwhile, Centre City ZIP codes like 19102 and 19103 tell the opposite story. Despite moderate unemployment, they record very few shootings, likely reflecting the effect of high foot traffic, dense policing, and CCTV coverage in the city’s commercial core. Together, these outliers serve as a useful reminder that unemployment is one piece of a more complex puzzle, not the whole picture.</p>
+<p>The data supports this clearly. The correlation between unemployment rate and shooting count is r = 0.559 (p &lt; 0.001). The r value measures the strength of the linear relationship between two variables, ranging from -1 to +1. A value of +1 would mean that every increase in unemployment is matched by a perfectly proportional increase in shootings, while -1 would mean the opposite, that higher unemployment perfectly predicts fewer shootings. Zero means no relationship at all. A value of 0.559 represents a moderate to strong positive relationship that is highly statistically significant.</p>
+<p>In plain terms, ZIP codes with higher unemployment consistently experience more shootings. Notable ZIP codes like Logan / Fern Rock (19140) and Nicetown / Tioga (19132) sit near the top of both axes, closely following the trend.</p>
+<p>There are some interesting outliers worth discussing. Kensington / Port Richmond (19134) has substantially more shootings than its unemployment rate alone would predict. Kensington is home to one of the most notorious open-air drug markets in the United States, centred around the intersection of Kensington and Allegheny Avenues, locally known as “the corner”. The area is characterised by widespread open drug use, extreme homelessness, and discarded syringes, conditions that create an environment where violence is driven by factors well beyond unemployment statistics alone.</p>
+<p>The city launched a Kensington Community Revival plan in 2024, and early results show some promise, with reported reductions of 45% in homicides and 17% in overall violent crime compared to 2023. Whether these gains are sustained remains to be seen, but Kensington stands as a clear example of how localised social crises can push shooting rates far above what neighbourhood economics would predict <em>(The Philadelphia Citizen, <a href="https://thephiladelphiacitizen.org/kensington-safety-plan/">Kensington’s Safety Plan Shows Early Promise</a>, March 2025)</em>.</p>
+<p>Meanwhile, Centre City ZIP codes like Rittenhouse / Fitler (19103) and Center City West (19102) tell the opposite story. Despite moderate unemployment, they record very few shootings, likely reflecting the effect of high foot traffic, dense policing, and CCTV coverage in the city’s commercial core. Together, these outliers imply that unemployment is one piece of a more complex situational landscape and doesn’t paint the whole picture.</p>
 </section>
 <section id="does-unemployment-make-shootings-more-deadly" class="level3">
 <h3 class="anchored" data-anchor-id="does-unemployment-make-shootings-more-deadly">4.3 Does Unemployment Make Shootings More Deadly?</h3>
-<p>Volume is one thing — but does living in a high-unemployment area also make a shooting more likely to be fatal? This is a subtler question, and the answer turns out to be quite different.</p>
-<div id="cell-22" class="cell" data-execution_count="14">
+<p>Volume is one thing. But does living in a high-unemployment neighbourhood also make a shooting more likely to be fatal? If economic deprivation shapes not just how often shootings happen but how deadly they are when they do, we would expect to see the same upward trend here. The scatter plot aims to visualise this.</p>
+<div id="cell-22" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Section 4.3: Unemployment Rate vs. Fatal Rate (Interactive) ───────────────</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>m2, b2 <span class="op">=</span> np.polyfit(merged[<span class="st">'unemployment_rate'</span>], merged[<span class="st">'fatal_rate'</span>] <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
@@ -676,8 +672,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Here the relationship essentially disappears. The correlation between unemployment rate and fatal shooting rate is r = -0.135 (p = 0.37), which is not statistically significant and barely a trend at all. The scatter is striking in its randomness, with ZIP codes at 2% unemployment and ZIP codes at 16% unemployment showing broadly similar fatal rates, clustering around the 20 to 25% range regardless of economic conditions.</p>
-<p>It is worth treating the outliers with caution. ZIP code 19118 appears to have a fatal rate of 50%, which sounds alarming, but this figure is based on just 2 recorded shootings, one of which was fatal. Similarly, 19154 records a fatal rate of 45.1% from only 17 incidents. When the underlying counts are this small, a single additional fatal or non-fatal shooting would swing the percentage dramatically. These are statistical artefacts of low sample sizes rather than meaningful signals, and should not be over-interpreted.</p>
+<p>Each dot above represents a ZIP code, plotted by its unemployment rate on the horizontal axis and its fatal shooting rate on the vertical axis. If unemployment drove lethality, we would expect the dots to rise from left to right. Instead, the trend line is actually slightly downward facing, and the dots scatter widely above and below it at every unemployment level.</p>
+<p>Here the relationship essentially disappears. The correlation between unemployment rate and fatal shooting rate is r = -0.135 (p = 0.37), which is not statistically significant and shows barely any trend. The scatter is striking in its randomness, with ZIP codes at 2% unemployment and ZIP codes at 16% unemployment showing broadly similar fatal rates, clustering around the 20 to 25% range regardless of economic conditions.</p>
+<p>It is worth treating the outliers with caution. Chestnut Hill (19118) appears to have a fatal rate of 50%, which sounds alarming, but this figure is based on just 2 recorded shootings, one of which was fatal. Similarly, Somerton / Parkwood (19154) records a fatal rate of 45.1% from only 17 incidents. When the underlying counts are this small, a single additional fatal or non-fatal shooting would swing the percentage dramatically. These are statistical artefacts of low sample sizes rather than meaningful signals, and should not be over-interpreted.</p>
 <p>The ZIP codes with high shooting counts, where the fatal rate estimates are most reliable, cluster tightly around the 20 to 25% range regardless of unemployment level. This reinforces the core finding: whether a shooting victim survives appears to have little to do with the economic character of the neighbourhood where it happened. Fatality is more likely driven by immediate circumstances such as the nature of the weapon used, the distance to the nearest trauma centre, or the specific dynamics of the incident itself.</p>
 <p>This is an important distinction to carry forward. Unemployment helps explain where shootings concentrate across the city, but it tells us very little about how deadly they are when they occur. The two questions require different analytical lenses entirely.</p>
 </section>
@@ -687,8 +684,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Two clear findings emerge from this analysis:</p>
 <p><strong>Unemployment predicts shooting volume.</strong> ZIP codes with higher unemployment rates have significantly more shootings (r = 0.559, p &lt; 0.001). This is consistent with a large body of criminological research linking economic deprivation to violent crime. When people lack stable employment and economic opportunity, the conditions for violence are more likely to take hold.</p>
 <p><strong>Unemployment does not predict shooting severity.</strong> The fatal rate of shootings is essentially unrelated to a ZIP code’s unemployment rate (r = -0.135, p = 0.37). Whatever determines whether a victim survives appears to operate at the individual incident level, not the neighbourhood level.</p>
-<p>So which neighbourhoods bear the heaviest burden? The tables below rank Philadelphia’s ZIP codes in two ways: by the sheer volume of shootings recorded over the nine-year period, and by fatal rate among areas with at least 200 incidents. Together they paint a picture of where gun violence is most frequent and where it is most deadly, two questions that, as the analysis above shows, do not always have the same answer.</p>
-<div id="cell-25" class="cell" data-execution_count="27">
+<p>So which neighbourhoods bear the heaviest burden? The tables below rank Philadelphia’s ZIP codes in two ways: by the sheer volume of shootings recorded over the nine-year period, and by fatal rate among areas with at least 200 incidents. Together they paint a picture of where gun violence is most frequent and where it is most deadly. As the analysis above shows, these are not always the same neighbourhoods.</p>
+<div id="cell-25" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Section 5: Top 5 Most Unsafe Neighbourhoods ──────────────────────────────</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.gridspec <span class="im">as</span> gridspec</span>
@@ -766,19 +763,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>The left table confirms what the spatial analysis suggested. Kensington / Port Richmond leads by a significant margin, recording nearly 330 more shootings than second-placed Logan / Fern Rock over the nine-year period. Three of the top five neighbourhoods carry unemployment rates above 12%, consistent with the broader correlation found earlier. The exception is Kensington / Port Richmond, where unemployment sits well below that threshold, reinforcing the earlier point that its shooting burden is driven by the drug market crisis rather than economic deprivation alone.</p>
+<p>The right table shows that when ranked by fatal rate, a largely different set of neighbourhoods emerges. Germantown / Ogontz tops the list despite having a moderate overall shooting volume, and several other high-fatality neighbourhoods have relatively low unemployment rates. This further supports the finding that how deadly a shooting is has little to do with the economic character of the area where it happens.</p>
+<p>Despite enormous differences in shooting volume between neighbourhoods, the share of incidents that prove fatal remains remarkably consistent, clustering in a tight band regardless of unemployment level or overall violence burden.</p>
 </section>
-<section id="caveats-limitations" class="level2">
-<h2 class="anchored" data-anchor-id="caveats-limitations">6. Caveats &amp; Limitations</h2>
-<p>No analysis like this is without its blind spots, and it’s worth being honest about them.</p>
-<p>The most important is that <strong>correlation is not causation</strong>. Finding that unemployment and shootings co-occur in the same ZIP codes doesn’t tell us that unemployment <em>causes</em> gun violence — both could be driven by a third factor, like decades of disinvestment in particular neighbourhoods.</p>
-<p>There is also a <strong>temporal mismatch</strong>: the ACS unemployment figures are from 2024, while the shooting data runs from 2015 to 2023. Unemployment patterns are relatively stable over time, but this is worth keeping in mind.</p>
-<p>Finally, ZIP codes are <strong>coarse geographic units</strong>. A lot of variation happens within a single ZIP code, and averaging over large areas inevitably smooths out important local differences.</p>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">6. Limitations</h2>
+<p>It is important to note that this analysis does have some limitations.</p>
+<p>The most important is that <strong>correlation is not causation</strong>. Finding that unemployment and shootings co-occur in the same ZIP codes does not tell us that unemployment <em>causes</em> gun violence. Both could be driven by a third factor, such as decades of disinvestment in particular neighbourhoods, racial segregation, or the historical concentration of public housing.</p>
+<p>There is also a <strong>temporal mismatch</strong>. The ACS unemployment figures are from 2024, while the shooting data runs from 2015 to 2023. Unemployment patterns tend to be relatively stable over time, but this gap is worth acknowledging.</p>
+<p><strong>ZIP codes are coarse geographic units.</strong> A lot of variation happens within a single ZIP code, and averaging over large areas inevitably smooths out important local differences. A block-level or census tract analysis would likely reveal sharper patterns.</p>
+<p>Finally, <strong>population density confounding</strong> is a real concern. Denser areas naturally have more unemployed residents and more opportunities for violent conflict simply by virtue of having more people. Normalising both variables by population would be a logical next step for a more rigorous analysis.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">7. Conclusion</h2>
-<p>Philadelphia’s gun violence problem is not random. It is spatially concentrated, temporally patterned, and — as this analysis shows — meaningfully correlated with economic deprivation at the neighbourhood level. ZIP codes where unemployment is highest are consistently the same ZIP codes where the most shootings occur.</p>
-<p>That doesn’t mean unemployment is the whole story. The fact that fatal rate is uncorrelated with unemployment suggests that survival after a shooting depends on factors this analysis can’t capture — response times, weapon type, distance to trauma care. A fuller picture would require more granular data and a more complex model.</p>
-<p>But as a starting point, the message is clear: tackling gun violence in Philadelphia may be inseparable from tackling the economic conditions that make certain neighbourhoods so much more vulnerable than others.</p>
+<p>Philadelphia’s gun violence problem is not random. It is spatially concentrated, temporally patterned, and meaningfully correlated with economic deprivation at the neighbourhood level. ZIP codes where unemployment is highest are consistently the same ZIP codes where the most shootings occur, and the spatial overlap between the two is visible at a glance.</p>
+<p>The analysis also reveals what unemployment cannot explain. Fatal rates remain stubbornly consistent across neighbourhoods regardless of their economic conditions, suggesting that whether a victim survives depends on more immediate factors: the nature of the incident, the weapon involved, and how quickly advanced trauma care can be reached. These are questions that require different data and a different analytical lens.</p>
+<p>Kensington serves as an important reminder that unemployment is not the only driver. Localised crises, whether a drug market, a history of disinvestment, or the breakdown of community institutions, can push violence far beyond what economics alone would predict. The neighbourhood sits at the intersection of multiple compounding factors, none of which unemployment statistics fully capture.</p>
+<p>What this analysis does establish is a clear and statistically significant relationship between economic deprivation and shooting volume at the ZIP code level. That finding alone carries a policy implication worth taking seriously: efforts to reduce gun violence in Philadelphia’s most affected neighbourhoods may need to go hand in hand with investment in the economic conditions that make those neighbourhoods so much more vulnerable in the first place.</p>
 
 
 </section>
