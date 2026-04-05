@@ -200,72 +200,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>When the economy gets shaky, people don’t always call their financial advisor. They open a browser tab and start typing.</p>
-<p>Google Trends captures that impulse in real time. Unlike GDP figures or unemployment reports, which lag weeks or months behind reality, search data reflects the moment people start to feel something is wrong. Before layoffs show up in government statistics, people are already searching “how to save money” and “food bank near me.”</p>
-<p>In this post, we use Google Trends data to trace the rhythms of American economic anxiety from 2019 to the present. We look at four search terms that together tell a story about how ordinary people experience financial stress:</p>
+<p>Economic news travels fast, and Google Search data captures how people respond to it in real time. The moment a crisis makes headlines, people start searching, and that signal is immediate and unfiltered.</p>
+<p>Google Trends captures this in ways that traditional economic data cannot. Unlike GDP figures or unemployment reports, which lag weeks or months behind reality, search data reflects public anxiety as it happens. That shift shows up in the data within days.</p>
+<p>In this post, we use Google Trends data to trace twenty years of American economic anxiety, from 2004 to the present. We look at three search terms that together tell a story about how ordinary people respond to financial stress:</p>
 <ul>
-<li><strong><code>how to save money</code></strong>: a broad signal of belt-tightening</li>
-<li><strong><code>food bank near me</code></strong>: a sharper signal of acute need</li>
-<li><strong><code>layoff</code></strong>: job insecurity and fear of unemployment</li>
-<li><strong><code>recession</code></strong>: awareness of or anxiety about broader economic collapse</li>
+<li><strong><code>inflation</code></strong>: signalling rising cost-of-living anxiety</li>
+<li><strong><code>unemployment benefits</code></strong>: signalling acute job loss and financial need</li>
+<li><strong><code>recession</code></strong>: awareness of / anxiety about broader economic collapse</li>
 </ul>
-<p>What we find is that these four terms move together in revealing ways, spiking around the same moments of national economic stress, and that the pattern of searches often precedes or amplifies what shows up in official data.</p>
+<p>What we find is that these three terms do not always move together. Each crisis has a different signature in the data, reflecting who it hit, how fast, and how the story was told in the news.</p>
 <section id="getting-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="getting-the-data">Getting the Data</h2>
-<p>Google Trends data is freely available at <a href="https://trends.google.com">trends.google.com</a>. For this analysis, we downloaded weekly search interest data for each of our four terms in the United States, covering <strong>January 2019 through March 2026</strong>.</p>
-<p>A few things to keep in mind about how Google Trends works:</p>
-<ul>
-<li>Values are <strong>relative</strong>, not absolute. A score of 100 means peak search interest for that term over the selected period. A score of 50 means half as much interest.</li>
-<li>You can compare multiple terms in a single download, which normalizes them against each other. We do this so the terms are on the same scale.</li>
-<li>When you download the CSV, the first two rows are metadata. We skip those when loading into pandas.</li>
-</ul>
-<p>To get this data yourself: 1. Go to <a href="https://trends.google.com">trends.google.com</a> 2. Search for <code>how to save money</code> and add the other three terms using the <strong>+ Compare</strong> button 3. Set the region to <strong>United States</strong> and the time range to <strong>2019-01-01 to present</strong> 4. Click the download icon to save the CSV 5. Save it as <code>data/economic_anxiety.csv</code></p>
+<p>Google Trends data was sourced from <a href="https://trends.google.com">trends.google.com</a>. For this analysis, weekly search interest data for each of the above three terms in the United States, covering <strong>January 2019 through March 2026</strong> was downloaded.</p>
+<p>One thing to keep in mind about how Google Trends works is that values are <strong>relative</strong>, not absolute. A score of 100 means peak search interest for that term over the selected period. A score of 50 means half as much interest.</p>
 </section>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
-<div id="cell-4" class="cell" data-execution_count="13">
+<div id="cell-4" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.dates <span class="im">as</span> mdates</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Consistent styling across all plots</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.figsize'</span>] <span class="op">=</span> (<span class="dv">13</span>, <span class="dv">5</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.top'</span>] <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.right'</span>] <span class="op">=</span> <span class="va">False</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="load-and-clean-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="load-and-clean-the-data">Load and Clean the Data</h2>
-<div id="cell-6" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Skip the first two metadata rows that Google Trends adds to every CSV export</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data/economic_anxiety.csv'</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    skiprows<span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    index_col<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span><span class="va">True</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename columns to something readable</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="st">'save_money'</span>, <span class="st">'food_bank'</span>, <span class="st">'layoff'</span>, <span class="st">'recession'</span>]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace '&lt;1' values (Google Trends uses this for very low interest) with 0</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.replace(<span class="st">'&lt;1'</span>, <span class="dv">0</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure values are numeric</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.<span class="bu">apply</span>(pd.to_numeric, errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Dataset: </span><span class="sc">{</span>df<span class="sc">.</span>index[<span class="dv">0</span>]<span class="sc">.</span>date()<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>df<span class="sc">.</span>index[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>date()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Consistent styling across all plots</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.figsize'</span>] <span class="op">=</span> (<span class="dv">13</span>, <span class="dv">5</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.top'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.right'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Skip the first two metadata rows that Google Trends adds to every CSV export</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data/economic_anxiety.csv'</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    skiprows<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    index_col<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span><span class="va">True</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Renaming columns to something readable</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="st">'inflation'</span>, <span class="st">'unemp_benefits'</span>, <span class="st">'recession'</span>]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.replace(<span class="st">'&lt;1'</span>, <span class="dv">0</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensuring values are numeric.</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.<span class="bu">apply</span>(pd.to_numeric, errors<span class="op">=</span><span class="st">'coerce'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Dataset: 2004-03-01 to 2026-03-01
-Rows: 265</code></pre>
+<pre><code>Dataset: 2004-01-01 to 2026-04-01
+Rows: 268</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 
 
@@ -273,14 +255,12 @@ Rows: 265</code></pre>
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">save_money</th>
-<th data-quarto-table-cell-role="th">food_bank</th>
-<th data-quarto-table-cell-role="th">layoff</th>
+<th data-quarto-table-cell-role="th">inflation</th>
+<th data-quarto-table-cell-role="th">unemp_benefits</th>
 <th data-quarto-table-cell-role="th">recession</th>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">2004-02-01</th>
-<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Month</th>
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th"></th>
@@ -288,39 +268,34 @@ Rows: 265</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
+<th data-quarto-table-cell-role="th">2004-01-01</th>
+<td>16</td>
+<td>6</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2004-02-01</th>
+<td>18</td>
+<td>5</td>
+<td>2</td>
+</tr>
+<tr class="odd">
 <th data-quarto-table-cell-role="th">2004-03-01</th>
-<td>1</td>
-<td>0</td>
-<td>5</td>
-<td>5</td>
+<td>19</td>
+<td>4</td>
+<td>2</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">2004-04-01</th>
+<td>21</td>
+<td>4</td>
 <td>2</td>
-<td>0</td>
-<td>5</td>
-<td>5</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2004-05-01</th>
-<td>2</td>
-<td>0</td>
-<td>5</td>
+<td>20</td>
 <td>4</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">2004-06-01</th>
 <td>2</td>
-<td>0</td>
-<td>6</td>
-<td>4</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2004-07-01</th>
-<td>2</td>
-<td>0</td>
-<td>6</td>
-<td>3</td>
 </tr>
 </tbody>
 </table>
@@ -329,55 +304,92 @@ Rows: 265</code></pre>
 </div>
 </div>
 </section>
-<section id="a-first-look-all-four-terms-over-time" class="level2">
-<h2 class="anchored" data-anchor-id="a-first-look-all-four-terms-over-time">A First Look: All Four Terms Over Time</h2>
-<p>Before diving into individual terms, it helps to see them together. The chart below plots weekly search interest for all four terms from 2019 to the present. A few events are annotated to give context.</p>
-<div id="cell-8" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<section id="a-first-look-all-three-terms-over-time" class="level2">
+<h2 class="anchored" data-anchor-id="a-first-look-all-three-terms-over-time">A First Look: All Three Terms Over Time</h2>
+<p>Before diving into individual terms, it helps to see them together. The chart below plots weekly search interest for all three terms from 2019 to the present. A few events are annotated to give context.</p>
+<div id="cell-6" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'inflation'</span>:      <span class="st">'#0077BB'</span>,  <span class="co"># blue</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'unemp_benefits'</span>: <span class="st">'#EE7733'</span>,  <span class="co"># orange</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'recession'</span>:      <span class="st">'#CC3311'</span>,  <span class="co"># red</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'inflation'</span>:      <span class="st">'inflation'</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'unemp_benefits'</span>: <span class="st">'unemployment benefits'</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'recession'</span>:      <span class="st">'recession'</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    ax.plot(df.index, df[col], label<span class="op">=</span>labels[col], color<span class="op">=</span>colors[col], linewidth<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotate key economic moments</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>annotations <span class="op">=</span> [</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2007-12-01'</span>, <span class="st">'Great Recession starts'</span>),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2008-09-15'</span>, <span class="st">'Lehman Brothers collapse'</span>),</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2009-06-01'</span>, <span class="st">'Great Recession ends'</span>),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2019-08-14'</span>, <span class="st">'August 14th Yield Curve Inversion'</span>),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2020-03-15'</span>, <span class="st">'COVID lockdowns begin'</span>),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-03-16'</span>, <span class="st">'Fed starts raising rates'</span>),</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-11-09'</span>, <span class="st">'Tech layoffs surge (Meta/Twitter)'</span>),</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2023-01-20'</span>, <span class="st">'Mass Tech layoffs (Google/MSFT)'</span>),</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> date_str, label <span class="kw">in</span> annotations:</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    ax.axvline(pd.Timestamp(date_str), color<span class="op">=</span><span class="st">'gray'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="fl">0.8</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    ax.text(pd.Timestamp(date_str), <span class="dv">95</span>, label, rotation<span class="op">=</span><span class="dv">90</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            va<span class="op">=</span><span class="st">'top'</span>, ha<span class="op">=</span><span class="st">'right'</span>, color<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Google Search Interest in Economic Anxiety Terms, 2004-2026'</span>, fontsize<span class="op">=</span><span class="dv">13</span>, pad<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Search interest (0-100, relative scale)'</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">''</span>)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper left'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(mdates.DateFormatter(<span class="st">'%Y'</span>))</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">105</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="DOW6_economic_anxiety_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Even at this scale, the data tells a clear story. The two biggest spikes in the dataset are not what you might expect. The 2020 COVID shock dominates “unemployment benefits,” which makes sense given the immediate and widespread job losses. But the second largest spike is “recession” in late 2022 and into 2023, actually exceeding anything seen during the 2008 financial crisis.</p>
+<p>This seems counterintuitive: by most conventional measures, 2008 was a far more severe economic event. The 2023 spike likely reflects how much the media landscape has changed since then, with more outlets, social media, and podcasts pushing the word “recession” into public conversation even as economists debated whether one was actually happening. The search data captures anxiety about a recession that, by most measures, never fully arrived.</p>
+<p>The period between 2012 and 2019 is notable for how flat it is across all three terms: a long stretch of relative calm that mirrors the slow post-recession recovery. “Inflation” is the exception. It maintains a steady background hum across the entire twenty years, but begins climbing sharply from 2021 onward and has not come back down. Unlike “recession” and “unemployment benefits,” which spike and fade, inflation anxiety appears to have become a permanent feature of the post-pandemic search landscape.</p>
+</section>
+<section id="the-great-recession-2008" class="level2">
+<h2 class="anchored" data-anchor-id="the-great-recession-2008">The Great Recession: 2008</h2>
+<p>The 2008 financial crisis tells a different story from COVID. Where March 2020 was a single synchronized shock, the Great Recession built gradually. The chart below zooms in on 2007-2010.</p>
+<div id="cell-9" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>recession_2008 <span class="op">=</span> df[<span class="st">'2007-01-01'</span>:<span class="st">'2010-12-31'</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'save_money'</span>: <span class="st">'#2c7bb6'</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'food_bank'</span>:  <span class="st">'#d7191c'</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'layoff'</span>:     <span class="st">'#fdae61'</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'recession'</span>:  <span class="st">'#1a9641'</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'save_money'</span>: <span class="st">'how to save money'</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'food_bank'</span>:  <span class="st">'food bank near me'</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'layoff'</span>:     <span class="st">'layoff'</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">'recession'</span>:  <span class="st">'recession'</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> recession_2008.columns:</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    ax.plot(recession_2008.index, recession_2008[col],</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span>labels[col], color<span class="op">=</span>colors[col], linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>ax.axvline(pd.Timestamp(<span class="st">'2008-09-15'</span>), color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ax.text(pd.Timestamp(<span class="st">'2008-09-15'</span>), <span class="dv">97</span>, <span class="st">'Lehman Brothers collapses</span><span class="ch">\n</span><span class="st">Sep 15, 2008'</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        rotation<span class="op">=</span><span class="dv">90</span>, fontsize<span class="op">=</span><span class="dv">8</span>, va<span class="op">=</span><span class="st">'top'</span>, ha<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Shade the official NBER recession period (Dec 2007 - Jun 2009)</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>ax.axvspan(pd.Timestamp(<span class="st">'2007-12-01'</span>), pd.Timestamp(<span class="st">'2009-06-30'</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>           alpha<span class="op">=</span><span class="fl">0.07</span>, color<span class="op">=</span><span class="st">'red'</span>, label<span class="op">=</span><span class="st">'Official recession (NBER)'</span>)</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    ax.plot(df.index, df[col], label<span class="op">=</span>labels[col], color<span class="op">=</span>colors[col], linewidth<span class="op">=</span><span class="fl">1.5</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotate key economic moments</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>annotations <span class="op">=</span> [</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2007-12-01'</span>, <span class="st">'Great Recession starts'</span>),</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2008-09-15'</span>, <span class="st">'Lehman Brothers collapse'</span>),</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2009-06-01'</span>, <span class="st">'Great Recession ends'</span>),</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2019-08-14'</span>, <span class="st">'August 14th Yield Curve Inversion'</span>),</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2020-03-15'</span>, <span class="st">'COVID lockdowns begin'</span>),</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-03-16'</span>, <span class="st">'Fed starts raising rates'</span>),</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-11-09'</span>, <span class="st">'Tech layoffs surge (Meta/Twitter)'</span>),</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2023-01-20'</span>, <span class="st">'Mass Tech layoffs (Google/MSFT)'</span>),</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> date_str, label <span class="kw">in</span> annotations:</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    ax.axvline(pd.Timestamp(date_str), color<span class="op">=</span><span class="st">'gray'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="fl">0.8</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    ax.text(pd.Timestamp(date_str), <span class="dv">95</span>, label, rotation<span class="op">=</span><span class="dv">90</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>,</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>            va<span class="op">=</span><span class="st">'top'</span>, ha<span class="op">=</span><span class="st">'right'</span>, color<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Google Search Interest in Economic Anxiety Terms, 2004-2026'</span>, fontsize<span class="op">=</span><span class="dv">13</span>, pad<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Search interest (0-100, relative scale)'</span>)</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">''</span>)</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper left'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(mdates.DateFormatter(<span class="st">'%Y'</span>))</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">105</span>)</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'figures/all_terms_overview.png'</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'The Great Recession (2007-2010)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, pad<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Search interest (relative scale)'</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper left'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(mdates.DateFormatter(<span class="st">'%b %Y'</span>))</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">105</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -386,17 +398,15 @@ Rows: 265</code></pre>
 </div>
 </div>
 </div>
-</section>
-<section id="the-great-recession-2008" class="level2">
-<h2 class="anchored" data-anchor-id="the-great-recession-2008">The Great Recession: 2008</h2>
+<p>A few things stand out. “Recession” was the dominant term, beginning to climb in early 2008 and spiking sharply around the Lehman collapse in September. People were Googling a word they were hearing everywhere in the news. Notably, the NBER did not officially declare the recession until December 2008, months after search interest had already peaked, suggesting the public felt it before economists named it.</p>
+<p>“Unemployment benefits” rose more gradually, tracking job losses as unemployment climbed toward 10% through 2009, and remained elevated long after “recession” had faded. This is the tail of the crisis: the acute fear subsided, but the practical need to navigate job loss and benefits stretched well into the recovery.</p>
+<p>“Inflation” is the most striking line in this chart for what it does not do. It barely moves across the entire 2007-2010 period, holding steady at a low baseline throughout one of the worst economic crises in modern history. This makes sense: the 2008 crash was deflationary, not inflationary. The contrast with the post-2021 period, where inflation dominates the chart, could not be sharper.</p>
 </section>
 <section id="the-covid-spike-march-2020" class="level2">
 <h2 class="anchored" data-anchor-id="the-covid-spike-march-2020">The COVID Spike: March 2020</h2>
-<p>The most dramatic feature in the data is what happens in March 2020. When the pandemic hit and lockdowns began, all four terms spiked simultaneously.</p>
-<p>“Food bank near me” reached its highest point in the entire dataset in the weeks following lockdown. This makes sense: millions of people were suddenly out of work, many of them hourly workers in food service and retail who had little savings buffer. For many Americans, the search bar was the first place they turned.</p>
-<p>“Layoff” and “recession” both surged too, but they peaked slightly later, as the economic fallout became clearer. “How to save money” spiked early and stayed elevated for longer, suggesting that the belt-tightening instinct outlasted the acute crisis.</p>
+<p>The most dramatic feature in the data is what happens in March 2020. When the pandemic hit and lockdowns began, all three terms spiked simultaneously.</p>
 <p>Let’s zoom in on that period to see the timing more clearly.</p>
-<div id="cell-11" class="cell" data-execution_count="16">
+<div id="cell-12" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on January 2020 to December 2020</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>covid_window <span class="op">=</span> df[<span class="st">'2020-01-01'</span>:<span class="st">'2020-12-31'</span>]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -416,8 +426,7 @@ Rows: 265</code></pre>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="dv">0</span>, <span class="dv">105</span>)</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'figures/covid_zoom.png'</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -426,14 +435,14 @@ Rows: 265</code></pre>
 </div>
 </div>
 </div>
+<p>The COVID chart tells a story of two very different kinds of anxiety. “Unemployment benefits” dominates, peaking at 100 in April 2020 as millions of newly jobless Americans scrambled to understand a system many had never interacted with before. Crucially, it did not drop back to baseline quickly: it stayed elevated through the summer and into the fall, reflecting the prolonged nature of pandemic job loss.</p>
+<p>“Recession” tells a shorter, sharper story. It spiked in March 2020 as the scale of the economic disruption became clear in the news, but faded quickly once the immediate shock passed. The public’s fear of a broader collapse was acute but brief.</p>
+<p>“Inflation” is almost completely flat across all of 2020, hovering at its usual baseline without any reaction to the pandemic. In hindsight this is telling: the inflationary consequences of the COVID stimulus and supply chain disruptions would not show up in search data until 2021 and beyond. In 2020, nobody was searching for it yet.</p>
 </section>
-<section id="the-slow-burn-inflation-and-tech-layoffs-2022-2023" class="level2">
-<h2 class="anchored" data-anchor-id="the-slow-burn-inflation-and-tech-layoffs-2022-2023">The Slow Burn: Inflation and Tech Layoffs, 2022-2023</h2>
-<p>After 2020, the data quiets down, but it does not go flat. A second, less dramatic wave of anxiety emerges starting in mid-2022, driven by a very different set of forces: inflation reaching 40-year highs and a wave of tech sector layoffs.</p>
-<p>This wave looks different from the COVID spike. Instead of a sharp, synchronized jump across all four terms, the 2022 pattern is more gradual and term-specific. “Recession” climbs steadily through 2022 as economists debate whether the Fed’s rate hikes will cause a downturn. “Layoff” spikes in late 2022 and early 2023, tracking the wave of cuts at major tech companies.</p>
-<p>“Food bank near me” also ticks up in 2022, likely reflecting the squeeze of high grocery and energy prices on lower-income households. This is a quieter story than March 2020, but in some ways a more persistent one.</p>
-<p>Below we look at just 2022-2023 to see this pattern more clearly.</p>
-<div id="cell-13" class="cell" data-execution_count="17">
+<section id="inflation-and-tech-layoffs-2022-2023" class="level2">
+<h2 class="anchored" data-anchor-id="inflation-and-tech-layoffs-2022-2023">Inflation and Tech Layoffs, 2022-2023</h2>
+<p>After 2020, the data quiets down but does not go flat. A third wave of anxiety emerges from 2022 onward, driven by a very different set of forces: inflation reaching 40-year highs and a wave of tech sector layoffs.</p>
+<div id="cell-15" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>inflation_window <span class="op">=</span> df[<span class="st">'2022-01-01'</span>:<span class="st">'2023-12-31'</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
@@ -444,24 +453,23 @@ Rows: 265</code></pre>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    ax.plot(smoothed.index, smoothed, label<span class="op">=</span>labels[col], color<span class="op">=</span>colors[col], linewidth<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Annotate key events</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>events_2022 <span class="op">=</span> [</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-03-16'</span>, <span class="st">'Fed first rate hike'</span>),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>events <span class="op">=</span> [</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-03-16'</span>, <span class="st">'Fed rate hike'</span>),</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2022-11-09'</span>, <span class="st">'Twitter/Meta layoffs'</span>),</span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2023-01-18'</span>, <span class="st">'Microsoft/Amazon cuts'</span>),</span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> date_str, label <span class="kw">in</span> events_2022:</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> date_str, label <span class="kw">in</span> events:</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    ax.axvline(pd.Timestamp(date_str), color<span class="op">=</span><span class="st">'gray'</span>, linestyle<span class="op">=</span><span class="st">':'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    ax.text(pd.Timestamp(date_str), <span class="dv">75</span>, label, rotation<span class="op">=</span><span class="dv">90</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    ax.text(pd.Timestamp(date_str), ax.get_ylim()[<span class="dv">1</span>] <span class="op">*</span> <span class="fl">0.95</span>, label, rotation<span class="op">=</span><span class="dv">90</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>,</span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            va<span class="op">=</span><span class="st">'top'</span>, ha<span class="op">=</span><span class="st">'right'</span>, color<span class="op">=</span><span class="st">'gray'</span>)</span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'The Inflation and Layoff Wave (2022-2023), 4-week rolling average'</span>, fontsize<span class="op">=</span><span class="dv">11</span>, pad<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Search interest (relative scale)'</span>)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper left'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>ax.xaxis.set_major_formatter(mdates.DateFormatter(<span class="st">'%b %Y'</span>))</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'figures/inflation_wave.png'</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -471,16 +479,16 @@ Rows: 265</code></pre>
 </div>
 </div>
 </section>
-<section id="comparing-the-two-waves" class="level2">
-<h2 class="anchored" data-anchor-id="comparing-the-two-waves">Comparing the Two Waves</h2>
-<p>To make the contrast between 2020 and 2022 concrete, we can compute the average search interest for each term across two windows: the COVID shock (March to June 2020) and the inflation period (July 2022 to December 2022).</p>
-<div id="cell-15" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>covid_avg <span class="op">=</span> df[<span class="st">'2020-03-01'</span>:<span class="st">'2020-06-30'</span>].mean()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>inflation_avg <span class="op">=</span> df[<span class="st">'2022-07-01'</span>:<span class="st">'2022-12-31'</span>].mean()</span>
+<section id="comparing-the-two-major-crises" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-the-two-major-crises">Comparing the Two Major Crises</h2>
+<p>To make the contrast between 2008 and 2020 concrete, we can compute the average search interest for each term across two time periods: the 2008 financial crisis (September 2008 to June 2009) and the COVID shock (March to June 2020).</p>
+<div id="cell-17" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gfc_avg <span class="op">=</span> df[<span class="st">'2008-09-01'</span>:<span class="st">'2009-06-30'</span>].mean()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>covid_avg <span class="op">=</span> df[<span class="st">'2020-03-01'</span>:<span class="st">'2020-06-30'</span>].mean()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>comparison <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'COVID shock (Mar-Jun 2020)'</span>: covid_avg,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Inflation wave (Jul-Dec 2022)'</span>: inflation_avg</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'2008 Financial Crisis'</span>: gfc_avg,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'COVID Shock (Mar-Jun 2020)'</span>: covid_avg,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>))</span>
@@ -488,15 +496,15 @@ Rows: 265</code></pre>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(comparison))</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="fl">0.35</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>bars1 <span class="op">=</span> ax.bar([i <span class="op">-</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], comparison[<span class="st">'COVID shock (Mar-Jun 2020)'</span>],</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>               width<span class="op">=</span>width, label<span class="op">=</span><span class="st">'COVID shock (Mar-Jun 2020)'</span>, color<span class="op">=</span><span class="st">'#d7191c'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>bars2 <span class="op">=</span> ax.bar([i <span class="op">+</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], comparison[<span class="st">'Inflation wave (Jul-Dec 2022)'</span>],</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>               width<span class="op">=</span>width, label<span class="op">=</span><span class="st">'Inflation wave (Jul-Dec 2022)'</span>, color<span class="op">=</span><span class="st">'#fdae61'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>bars1 <span class="op">=</span> ax.bar([i <span class="op">-</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], comparison[<span class="st">'2008 Financial Crisis'</span>],</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>               width<span class="op">=</span>width, label<span class="op">=</span><span class="st">'2008 Financial Crisis'</span>, color<span class="op">=</span><span class="st">'#0077BB'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>bars2 <span class="op">=</span> ax.bar([i <span class="op">+</span> width<span class="op">/</span><span class="dv">2</span> <span class="cf">for</span> i <span class="kw">in</span> x], comparison[<span class="st">'COVID Shock (Mar-Jun 2020)'</span>],</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>               width<span class="op">=</span>width, label<span class="op">=</span><span class="st">'COVID Shock (Mar-Jun 2020)'</span>, color<span class="op">=</span><span class="st">'#CC3311'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">list</span>(x))</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels([labels[c] <span class="cf">for</span> c <span class="kw">in</span> comparison.index], fontsize<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Average search interest'</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Average Search Interest: COVID Shock vs. Inflation Wave'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, pad<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Average Search Interest: 2008 Financial Crisis vs. COVID Shock'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, pad<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> bar <span class="kw">in</span> bars1:</span>
@@ -507,10 +515,9 @@ Rows: 265</code></pre>
 <span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'</span><span class="sc">{</span>bar<span class="sc">.</span>get_height()<span class="sc">:.0f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'bottom'</span>, fontsize<span class="op">=</span><span class="dv">8</span>)</span>
 <span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'figures/wave_comparison.png'</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(comparison.<span class="bu">round</span>(<span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(comparison.<span class="bu">round</span>(<span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -519,66 +526,147 @@ Rows: 265</code></pre>
 </div>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>            COVID shock (Mar-Jun 2020)  Inflation wave (Jul-Dec 2022)
-save_money                         3.5                            4.0
-food_bank                          4.2                            3.3
-layoff                            18.5                            7.8
-recession                         35.2                           42.3</code></pre>
+<pre><code>                2008 Financial Crisis  COVID Shock (Mar-Jun 2020)
+inflation                        16.8                        16.0
+unemp_benefits                   19.4                        63.0
+recession                        20.5                        18.5</code></pre>
 </div>
 </div>
+<p>The contrast in search results is clearly evident from the above figures.</p>
+<p>“Unemployment benefits” is the defining difference between the two crises: averaging 63 during the COVID shock compared to just 19 during the 2008 financial crisis. COVID had immediate and overwhelming a job losses, driving millions of people toward the benefits system all at once. In 2008, job losses were more gradual and spread over a longer period and hence shows up as a lower but more sustained baseline.</p>
+<p>However, “Recession” and “inflation” were roughly equal across the two periods, suggesting that abstract economic fear, whether about a downturn or rising prices, tends to produce similar levels of search interest regardless of the severity of the underlying event. What changes between crises is not how much people worry in general, but what specific, practical things they need to do.</p>
 </section>
 <section id="where-in-america-regional-breakdown" class="level2">
 <h2 class="anchored" data-anchor-id="where-in-america-regional-breakdown">Where in America? Regional Breakdown</h2>
 <p>Google Trends also lets you see which states show the highest interest in a given term, relative to all searches from that state. This geographic layer adds texture to the story.</p>
-<p>For example: interest in “food bank near me” tends to be higher in states with weaker social safety nets and higher poverty rates. Interest in “layoff” tracks more closely with states that have large tech or manufacturing workforces.</p>
+<p>For example: interest in “unemployment benefits” tends to be higher in states with weaker social safety nets and higher poverty rates. Interest in “layoff” tracks more closely with states that have large tech or manufacturing workforces.</p>
 <p>To get state-level data: 1. On Google Trends, run the same search 2. Scroll down to the <strong>“Interest by subregion”</strong> section 3. Download that CSV separately (it gives you one row per state)</p>
 <p>The cell below loads and displays that data if you have it. Otherwise, it skips gracefully.</p>
-<div id="cell-17" class="cell" data-execution_count="22">
+<div id="cell-20" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>regional_path <span class="op">=</span> <span class="st">'data/economic_anxiety_by_state.csv'</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(regional_path):</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the data</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    state_df <span class="op">=</span> pd.read_csv(regional_path, skiprows<span class="op">=</span><span class="dv">2</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    state_df.columns <span class="op">=</span> [<span class="st">'save_money'</span>, <span class="st">'food_bank'</span>, <span class="st">'layoff'</span>, <span class="st">'recession'</span>]</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Replace '&lt;1' with '0'</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Remove the '%' character so '24%' becomes '24'</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. Convert to numeric</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    state_df <span class="op">=</span> state_df.replace(<span class="st">'&lt;1'</span>, <span class="st">'0'</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    state_df <span class="op">=</span> state_df.replace(<span class="vs">r'%'</span>, <span class="st">''</span>, regex<span class="op">=</span><span class="va">True</span>).<span class="bu">apply</span>(pd.to_numeric)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Top 10 states by 'food bank near me' search interest:"</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(state_df[<span class="st">'food_bank'</span>].sort_values(ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>))</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"File not found."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Top 10 states by 'food bank near me' search interest:
-Region
-Arizona           14
-Washington        13
-Delaware          11
-Utah              10
-Idaho              9
-Louisiana          9
-Alaska             9
-Colorado           8
-Nevada             8
-South Carolina     8
-Name: food_bank, dtype: int64</code></pre>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>state_df <span class="op">=</span> pd.read_csv(regional_path, skiprows<span class="op">=</span><span class="dv">2</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>state_df.columns <span class="op">=</span> [<span class="st">'inflation'</span>, <span class="st">'unemp_benefits'</span>, <span class="st">'recession'</span>]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>state_df <span class="op">=</span> state_df.replace(<span class="st">'&lt;1'</span>, <span class="st">'0'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>state_df <span class="op">=</span> state_df.replace(<span class="vs">r'%'</span>, <span class="st">''</span>, regex<span class="op">=</span><span class="va">True</span>).<span class="bu">apply</span>(pd.to_numeric)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>top10 <span class="op">=</span> (state_df[<span class="st">'unemp_benefits'</span>]</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>         .sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>         .head(<span class="dv">10</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>         .reset_index()</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>         .rename(columns<span class="op">=</span>{<span class="st">'Region'</span>: <span class="st">'State'</span>, <span class="st">'unemp_benefits'</span>: <span class="st">'Search Interest'</span>}))</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>display(top10.style</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        .set_caption(<span class="st">'Top 10 States by Unemployment Benefits Search Interest'</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        .bar(subset<span class="op">=</span>[<span class="st">'Search Interest'</span>], color<span class="op">=</span><span class="st">'#EE7733'</span>, vmin<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        .hide(axis<span class="op">=</span><span class="st">'index'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<style type="text/css">
+#T_552d2_row0_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 100.0%, transparent 100.0%);
+}
+#T_552d2_row1_col1, #T_552d2_row2_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 88.1%, transparent 88.1%);
+}
+#T_552d2_row3_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 83.3%, transparent 83.3%);
+}
+#T_552d2_row4_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 78.6%, transparent 78.6%);
+}
+#T_552d2_row5_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 73.8%, transparent 73.8%);
+}
+#T_552d2_row6_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 69.0%, transparent 69.0%);
+}
+#T_552d2_row7_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 64.3%, transparent 64.3%);
+}
+#T_552d2_row8_col1, #T_552d2_row9_col1 {
+  width: 10em;
+  background: linear-gradient(90deg, #EE7733 59.5%, transparent 59.5%);
+}
+</style>
+
+<div id="T_552d2" class="quarto-float quarto-figure quarto-figure-center anchored" data-quarto-postprocess="true">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="T_552d2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Top 10 States by Unemployment Benefits Search Interest
+</figcaption>
+<div aria-describedby="T_552d2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table id="T_552d2" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th id="T_552d2_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">State</th>
+<th id="T_552d2_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">Search Interest</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td id="T_552d2_row0_col0" class="data row0 col0">Texas</td>
+<td id="T_552d2_row0_col1" class="data row0 col1">42</td>
+</tr>
+<tr class="even">
+<td id="T_552d2_row1_col0" class="data row1 col0">Louisiana</td>
+<td id="T_552d2_row1_col1" class="data row1 col1">37</td>
+</tr>
+<tr class="odd">
+<td id="T_552d2_row2_col0" class="data row2 col0">New York</td>
+<td id="T_552d2_row2_col1" class="data row2 col1">37</td>
+</tr>
+<tr class="even">
+<td id="T_552d2_row3_col0" class="data row3 col0">Kentucky</td>
+<td id="T_552d2_row3_col1" class="data row3 col1">35</td>
+</tr>
+<tr class="odd">
+<td id="T_552d2_row4_col0" class="data row4 col0">New Jersey</td>
+<td id="T_552d2_row4_col1" class="data row4 col1">33</td>
+</tr>
+<tr class="even">
+<td id="T_552d2_row5_col0" class="data row5 col0">New Mexico</td>
+<td id="T_552d2_row5_col1" class="data row5 col1">31</td>
+</tr>
+<tr class="odd">
+<td id="T_552d2_row6_col0" class="data row6 col0">Mississippi</td>
+<td id="T_552d2_row6_col1" class="data row6 col1">29</td>
+</tr>
+<tr class="even">
+<td id="T_552d2_row7_col0" class="data row7 col0">South Carolina</td>
+<td id="T_552d2_row7_col1" class="data row7 col1">27</td>
+</tr>
+<tr class="odd">
+<td id="T_552d2_row8_col0" class="data row8 col0">Georgia</td>
+<td id="T_552d2_row8_col1" class="data row8 col1">25</td>
+</tr>
+<tr class="even">
+<td id="T_552d2_row9_col0" class="data row9 col0">Connecticut</td>
+<td id="T_552d2_row9_col1" class="data row9 col1">25</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
 </div>
 </div>
+</div>
+<p>The regional breakdown reveals two distinct groups of states with high search interest in “unemployment benefits.” The first is large, high-population states like Texas, New York, and New Jersey, where the sheer size of the labor force produces more searches in absolute terms. The second is a cluster of lower-income Southern states: Louisiana, Kentucky, Mississippi, South Carolina, and Georgia, where higher rates of economic precarity likely drive greater need for unemployment benefits.</p>
+<p>Connecticut is the outlier. As one of the wealthier states in the country, its appearance in the top ten is unexpected. This could be explained by the uneven distribution of wealth within the state: Connecticut has significant pockets of poverty alongside its affluent suburbs, and its high cost of living can push even moderate-income households toward financial stress.</p>
 </section>
-<section id="what-the-search-bar-tells-us" class="level2">
-<h2 class="anchored" data-anchor-id="what-the-search-bar-tells-us">What the Search Bar Tells Us</h2>
-<p>The patterns in this data reinforce something that economists and journalists have increasingly come to appreciate: search behavior is a sensitive, real-time instrument for measuring public sentiment.</p>
-<p>A few things stand out from this analysis:</p>
-<p><strong>1. The COVID shock was uniquely broad.</strong> All four terms moved together in March 2020 in a way that had no precedent in the prior year. The speed and synchrony of the spike reflects how sudden and universal that economic disruption was.</p>
-<p><strong>2. The inflation wave was slower and more differentiated.</strong> In 2022, “recession” and “layoff” climbed while “food bank” and “save money” rose more modestly. This reflects a more uneven distribution of stress: the inflation era hit some households much harder than others depending on income, employment sector, and housing situation.</p>
-<p><strong>3. Search data can be a leading indicator.</strong> In both cases, search interest started climbing before official economic data confirmed the scale of the problem. This is the core appeal of using Google Trends for social research: it captures anxiety in real time, before it shows up in surveys or statistics.</p>
-<p>Of course, search data has real limits. It reflects who has internet access and who uses Google. It captures the act of searching, not the underlying need. Someone who knows their local food bank without needing to search for it will not appear in this data. The signal is real, but it is partial.</p>
-<p>Still, as a window into how ordinary Americans process economic uncertainty, the search bar is hard to beat.</p>
-<hr>
-<p><em>Data: Google Trends (trends.google.com), United States, weekly, 2019-2026. All search interest values are on a relative scale where 100 represents peak interest for the term over the selected period.</em></p>
+<section id="conclusion-what-twenty-years-of-searches-tell-us" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-what-twenty-years-of-searches-tell-us">Conclusion: What Twenty Years of Searches Tell Us</h2>
+<p>In conclusion, twenty years of Google Trends data reveals that economic anxiety leaves a measurable and distinct footprint in search behavior, and that footprint looks different depending on the nature of the crisis.</p>
+<p>The 2008 financial crisis built slowly, dominated by “recession” searches as the public followed an unfolding story through news and debate. COVID was the opposite: we see an immediate surge in “unemployment benefits” as millions of people lost their jobs overnight and navigated an unemployment benefits system many had never used before. The post-2020 period introduced another pattern, with “inflation” searches rising persistently and a “recession” spike in 2023 that exceeded 2008 despite no official recession being declared, likely driven by increased media coverage.</p>
+<p>What search data ultimately shows is not just that people are anxious, but what kind of anxious they are. Practical crises produce practical searches (unemployment). Abstract, media-driven fears produce abstract searches (recession). And as the regional breakdown shows, that anxiety is not evenly distributed: it concentrates in places with large labor forces and in places where economic precarity is a daily reality, not just a headline.</p>
+<p>Ultimately, the Google trends search data serves as a window into how ordinary Americans respond to economic uncertainty in real time, the search bar often tells us something that official statistics, with all their lags and averages, cannot.</p>
 
 
 </section>
