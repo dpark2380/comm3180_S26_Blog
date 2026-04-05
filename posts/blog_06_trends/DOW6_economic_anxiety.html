@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Daniel Park">
-<meta name="dcterms.date" content="2026-04-02">
+<meta name="dcterms.date" content="2026-04-05">
 <meta name="description" content="This blog analyzes twenty years of Google search trend data to show how economic anxiety and financial hardship have changed across America since 2004.">
 
 <title>Blog 06: How America Googles Its Way Through Economic Anxiety – Daniel’s Data Stories</title>
@@ -181,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">April 2, 2026</p>
+        <p class="date">April 5, 2026</p>
       </div>
     </div>
     
@@ -211,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>What we find is that these three terms do not always move together. Each crisis has a different signature in the data, reflecting who it hit, how fast, and how the story was told in the news.</p>
 <section id="getting-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="getting-the-data">Getting the Data</h2>
-<p>Google Trends data was sourced from <a href="https://trends.google.com">trends.google.com</a>. For this analysis, weekly search interest data for each of the above three terms in the United States, covering <strong>January 2019 through March 2026</strong> was downloaded.</p>
+<p>Google Trends data was sourced from <a href="https://trends.google.com">trends.google.com</a>. For this analysis, weekly search interest data for each of the above three terms in the United States, covering <strong>January 2004 through March 2026</strong> was downloaded.</p>
 <p>One thing to keep in mind about how Google Trends works is that values are <strong>relative</strong>, not absolute. A score of 100 means peak search interest for that term over the selected period. A score of 50 means half as much interest.</p>
 </section>
 <section id="setup" class="level2">
@@ -306,7 +306,7 @@ Rows: 268</code></pre>
 </section>
 <section id="a-first-look-all-three-terms-over-time" class="level2">
 <h2 class="anchored" data-anchor-id="a-first-look-all-three-terms-over-time">A First Look: All Three Terms Over Time</h2>
-<p>Before diving into individual terms, it helps to see them together. The chart below plots weekly search interest for all three terms from 2019 to the present. A few events are annotated to give context.</p>
+<p>Before diving into individual terms, it helps to see them together. The chart below plots weekly search interest for all three terms from 2004 to the present. A few events are annotated to give context.</p>
 <div id="cell-6" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -532,16 +532,12 @@ unemp_benefits                   19.4                        63.0
 recession                        20.5                        18.5</code></pre>
 </div>
 </div>
-<p>The contrast in search results is clearly evident from the above figures.</p>
-<p>“Unemployment benefits” is the defining difference between the two crises: averaging 63 during the COVID shock compared to just 19 during the 2008 financial crisis. COVID had immediate and overwhelming a job losses, driving millions of people toward the benefits system all at once. In 2008, job losses were more gradual and spread over a longer period and hence shows up as a lower but more sustained baseline.</p>
+<p>“Unemployment benefits” is the defining difference between the two crises: averaging 63 during the COVID shock compared to just 19 during the 2008 financial crisis. COVID produced immediate and overwhelming a job losses, driving millions of people toward the benefits system all at once. In 2008, job losses were more gradual and spread over a longer period and hence shows up as a lower but more sustained baseline.</p>
 <p>However, “Recession” and “inflation” were roughly equal across the two periods, suggesting that abstract economic fear, whether about a downturn or rising prices, tends to produce similar levels of search interest regardless of the severity of the underlying event. What changes between crises is not how much people worry in general, but what specific, practical things they need to do.</p>
 </section>
 <section id="where-in-america-regional-breakdown" class="level2">
 <h2 class="anchored" data-anchor-id="where-in-america-regional-breakdown">Where in America? Regional Breakdown</h2>
-<p>Google Trends also lets you see which states show the highest interest in a given term, relative to all searches from that state. This geographic layer adds texture to the story.</p>
-<p>For example: interest in “unemployment benefits” tends to be higher in states with weaker social safety nets and higher poverty rates. Interest in “layoff” tracks more closely with states that have large tech or manufacturing workforces.</p>
-<p>To get state-level data: 1. On Google Trends, run the same search 2. Scroll down to the <strong>“Interest by subregion”</strong> section 3. Download that CSV separately (it gives you one row per state)</p>
-<p>The cell below loads and displays that data if you have it. Otherwise, it skips gracefully.</p>
+<p>The crises we have looked at so far played out at the national level, but economic anxiety is not uniform across the country. Google Trends lets you break down search interest by state, showing which parts of America were searching most for “unemployment benefits” relative to all other searches in that state.</p>
 <div id="cell-20" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>regional_path <span class="op">=</span> <span class="st">'data/economic_anxiety_by_state.csv'</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
